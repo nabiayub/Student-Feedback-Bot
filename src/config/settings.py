@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     Bot settings loaded from .env using Pydantic Settings.
     """
     BOT_TOKEN: str
-    ADMIN_IDS: List[int]
+    ADMIN_ID: List[int]
     FORMAT_LOG: str = "{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}"
     LOG_ROTATION: str = "10 MB"
     model_config = SettingsConfigDict(
