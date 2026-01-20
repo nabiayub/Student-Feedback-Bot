@@ -135,7 +135,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+src/bot/config/.env
 .envrc
 .venv
 env/
@@ -209,7 +209,7 @@ __marimo__/
 
 
 # Mine
-.env
+src/bot/config/.env
 .venv/
 .idea/
 
