@@ -15,6 +15,7 @@ alembic = "^1.18.1"
 dotenv = "^0.9.9"
 sqlalchemy = "^2.0.45"
 loguru = "^0.7.3"
+psycopg2-binary = "^2.9.11"
 
 
 

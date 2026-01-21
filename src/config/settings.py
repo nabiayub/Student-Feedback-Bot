@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     """
     BOT_TOKEN: str
     ADMIN_ID: List[int]
+    DATABASE_URL: str
     FORMAT_LOG: str = "{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}"
     LOG_ROTATION: str = "10 MB"
     model_config = SettingsConfigDict(
