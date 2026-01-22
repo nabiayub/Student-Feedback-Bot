@@ -17,8 +17,4 @@ class Base(AsyncAttrs, DeclarativeBase):
         TIMESTAMP, server_default=func.now(), onupdate=func.now()
     )
 
-    @classmethod
-    @property
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower() + 's'
 
