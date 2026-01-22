@@ -213,4 +213,8 @@ src/config/.env
 .venv/
 .idea/
 src/logs
+alembic.ini
+alembic/
+migrations/
+
 
