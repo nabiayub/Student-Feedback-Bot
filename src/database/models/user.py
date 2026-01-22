@@ -33,5 +33,5 @@ class User(Base):
     )
 
     def __repr__(self):
-        return f"<User(username='{self.username}, id={self.id}, telegram_id={self.telegram_id}, ')>"
+        return f"<User(username='{self.username}, id={self.id}, telegram_id={self.telegram_id}')>"
 
