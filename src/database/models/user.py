@@ -16,16 +16,6 @@ class User(Base):
 
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    category_id: Mapped[int | None] = mapped_column(
-        ForeignKey('categories.id', ondelete='SET NULL'),
-        nullable=True
-    )
-
-    categories: Mapped[List["Categories"] | None] = relationship(
-        "Category",
-        back_populates="product"
-    )
-
     messages: Mapped[List["Message"] | None] = relationship(
         "Message",
         back_populates="products",
