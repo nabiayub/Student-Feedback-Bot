@@ -10,6 +10,13 @@ class Category(Base):
 
     title: Mapped[str] = mapped_column(String(100))
 
+
+    messages: Mapped[List["Message"] | None] = relationship(
+        "Message",
+        back_populates="products",
+        passive_deletes=True
+    )
+
     def __repr__(self):
         return f'<Category {self.title}>'
 
