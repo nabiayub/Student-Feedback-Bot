@@ -6,6 +6,9 @@ import asyncio
 from aiogram import Bot,  Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from src.middlewares import register_middlewares
+
+
 async def main() -> None:
     """
     Entry point for telegram bot.
@@ -13,6 +16,9 @@ async def main() -> None:
     """
     bot = Bot(token=settings.BOT_TOKEN)
     dp = Dispatcher(storage=MemoryStorage())
+
+    # register middlewares
+    register_middlewares(dp)
 
     await bot.send_message(
         chat_id=settings.ADMIN_ID[0],
