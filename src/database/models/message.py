@@ -4,7 +4,9 @@ from aiohttp.abc import StreamResponse
 from sqlalchemy import BigInteger, Boolean, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.database.models import User
 from src.database.models.base import Base
+from src.schemas.categories import Category
 
 
 class Message(Base):
@@ -28,19 +30,19 @@ class Message(Base):
         nullable=True
     )
 
-    users: Mapped[List["Users"] | None] = relationship(
-        "Category",
+    user: Mapped["User"] = relationship(
+        "User",
         back_populates="messages"
     )
 
-    categories: Mapped[List["Categories"] | None] = relationship(
+    category: Mapped["Category"] = relationship(
         "Category",
         back_populates="messages"
     )
 
     def __repr__(self):
-        username = self.users.username if self.users else None
-        telegram_id = self.users.telegram_id if self.users else None
+        username = self.user.username if self.users else None
+        telegram_id = self.user.telegram_id if self.users else None
         return f"<Message user={username} telegram_id={telegram_id}>"
 
 

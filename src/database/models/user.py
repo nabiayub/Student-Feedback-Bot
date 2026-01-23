@@ -18,7 +18,7 @@ class User(Base):
 
     messages: Mapped[List["Message"] | None] = relationship(
         "Message",
-        back_populates="products",
+        back_populates="user",
         passive_deletes=True
     )
 

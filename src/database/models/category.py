@@ -13,7 +13,7 @@ class Category(Base):
 
     messages: Mapped[List["Message"] | None] = relationship(
         "Message",
-        back_populates="products",
+        back_populates="category",
         passive_deletes=True
     )
 
