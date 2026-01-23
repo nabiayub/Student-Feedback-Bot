@@ -1,12 +1,12 @@
 
-from config.settings import settings, loguru_logger
+from config.settings import settings
 
 import asyncio
 
 from aiogram import Bot,  Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from src.middlewares import register_middlewares
+from src.bot.middlewares import register_middlewares
 
 
 async def main() -> None:
