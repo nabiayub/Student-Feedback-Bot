@@ -42,7 +42,7 @@ class BaseDatabaseMiddleware(BaseMiddleware):
 
 
 
-class DatabaseDatabaseMiddlewareWithCommit(BaseDatabaseMiddleware):
+class DatabaseMiddlewareWithCommit(BaseDatabaseMiddleware):
     def set_session(self, data: Dict[str, Any], session) -> None:
         """Set session with commit"""
         data['session_with_commit'] = session
@@ -53,7 +53,7 @@ class DatabaseDatabaseMiddlewareWithCommit(BaseDatabaseMiddleware):
         await session.commit()
 
 
-class DatabaseDatabaseMiddlewareWithoutCommit(BaseDatabaseMiddleware):
+class DatabaseMiddlewareWithoutCommit(BaseDatabaseMiddleware):
     def set_session(self, data: Dict[str, Any], session) -> None:
         """Set session without commit"""
         print(session)
