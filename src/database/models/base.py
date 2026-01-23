@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Integer, TIMESTAMP
-from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine, AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from sqlalchemy.sql import func
 

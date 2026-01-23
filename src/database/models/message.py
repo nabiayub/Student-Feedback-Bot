@@ -8,6 +8,9 @@ from src.database.models.base import Base
 
 
 class Message(Base):
+    """
+    Message table
+    """
     __tablename__ = 'messages'
 
     content: Mapped[str] = mapped_column(String)
