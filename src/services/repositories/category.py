@@ -1,6 +1,5 @@
 from sqlalchemy import select, ScalarResult
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.util import await_only
 
 from src.database.models import Category
 

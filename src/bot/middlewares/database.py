@@ -56,7 +56,6 @@ class DatabaseMiddlewareWithCommit(BaseDatabaseMiddleware):
 class DatabaseMiddlewareWithoutCommit(BaseDatabaseMiddleware):
     def set_session(self, data: Dict[str, Any], session) -> None:
         """Set session without commit"""
-        print(session)
         data['session_without_commit'] = session
 
 
