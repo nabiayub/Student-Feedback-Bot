@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database.models import User
 from src.database.models.base import Base
-from src.schemas.categories import Category
 
 
 class Message(Base):

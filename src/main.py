@@ -6,7 +6,7 @@ import asyncio
 from aiogram import Bot,  Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from src.bot.handlers import register_routes
+from src.bot.router import register_all_routers
 from src.bot.middlewares import register_middlewares
 
 
@@ -21,7 +21,7 @@ async def main() -> None:
     # register middlewares
     register_middlewares(dp)
 
-    register_routes(dp)
+    register_all_routers(dp)
 
     await bot.send_message(
         chat_id=settings.ADMIN_ID[0],

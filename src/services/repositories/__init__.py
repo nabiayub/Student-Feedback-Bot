@@ -1,4 +1,4 @@
-from .category import CategoryRepo
+from .categories import CategoryRepo
 
 __all__ = (
     'CategoryRepo',

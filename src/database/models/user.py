@@ -17,7 +17,7 @@ class User(Base):
 
     # indicates that the user has been asked to write his name at registration.
     # No need to ask automatically after if he doesn't want to.
-    registered = Mapped[bool] = mapped_column(Boolean, default=False)
+    registered: Mapped[bool] = mapped_column(Boolean, default=False)
 
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 

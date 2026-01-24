@@ -1,5 +1,5 @@
 from aiogram import Dispatcher
 
 
-def register_routes(dp: Dispatcher):
+def register_routers(dp: Dispatcher):
   ...
