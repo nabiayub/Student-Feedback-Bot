@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
-class Category(BaseModel):
+class CategoryBase(BaseModel):
     title: str
 
 class CategoryCreate(BaseModel):

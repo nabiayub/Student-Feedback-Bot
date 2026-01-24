@@ -6,11 +6,11 @@ from datetime import datetime
 class UserBase(BaseModel):
     telegram_id: int
     username: str
-    name: Optional[str] = None
+    name: str | None = None
 
 class UserRead(UserBase):
     id: int
-    is_admin: bool
+    is_admin: bool = False
     created_at: datetime
     updated_at: datetime
 
