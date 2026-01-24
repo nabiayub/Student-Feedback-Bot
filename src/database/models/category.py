@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database.models.base import Base
 
 class Category(Base):
+    """Category table"""
     __tablename__ = 'categories'
 
     title: Mapped[str] = mapped_column(String(100))

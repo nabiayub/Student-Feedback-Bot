@@ -7,12 +7,17 @@ from src.database.models.base import Base  # your created_at/updated_at mixin
 
 
 class User(Base):
+    """Users table"""
     __tablename__ = 'users'
 
     telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
 
     username: Mapped[str | None]
     name: Mapped[Optional[str | None]] = mapped_column(String, nullable=True)
+
+    # indicates that the user has been asked to write his name at registration.
+    # No need to ask automatically after if he doesn't want to.
+    registered = Mapped[bool] = mapped_column(Boolean, default=False)
 
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
