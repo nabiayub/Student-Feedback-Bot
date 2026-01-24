@@ -40,7 +40,7 @@ async def start_bot(
     if created:
         await message.answer('Account created successfully.')
         end_time = time.perf_counter()
-    else:per
+    else:
         await message.answer('Account already exists.')
         end_time = time.perf_counter()
 
