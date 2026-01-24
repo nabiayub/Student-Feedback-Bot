@@ -1,4 +1,4 @@
-from sqlalchemy import select, ScalarResult
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import User
@@ -11,7 +11,7 @@ class UserRepository:
     def __init__(self, session: AsyncSession):
         self.__session = session
 
-    async def get_user_by_telegram_id_or_none(self, telegram_id: int) -> UserRead | None:
+    async def get_user_by_telegram_id_or_none(self, telegram_id: int) -> User | None:
         """
         Get user by telegram id or none
         :param telegram_id:
@@ -39,6 +39,40 @@ class UserRepository:
             )
             self.__session.add(db_user)
             await self.__session.flush()
+
+        return UserRead.model_validate(db_user)
+
+    async def set_name(
+            self,
+            telegram_id: int,
+            name: str=None
+    ) -> None:
+        """
+        Method to set name of the user is User table.
+        If method receives name, changes "name" and "registered" fields.
+        Otherwise, name is set to none and only "registered" is set to True.
+        :param telegram_id: Telegram ID
+        :param name: Enter name. Default is None
+        :return:
+        """
+        user: User = await self.get_user_by_telegram_id_or_none(telegram_id)
+
+        if not user:
+            return
+
+        if name:
+            pass
+
+        print('Registered user')
+        user.registered = True
+
+
+
+
+
+
+
+
 
 
 
