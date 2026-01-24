@@ -8,6 +8,8 @@ from src.bot.users.states import UserNameState
 from src.schemas.users import UserCreate, UserRead
 from src.services.repositories.users import UserRepository
 
+import time
+
 router = Router()
 
 
@@ -27,13 +29,22 @@ async def start_bot(
 
     await message.answer(f'Welcome to AUT Feedback Bot.')
 
+    start_time = time.perf_counter()
 
     user_repo = UserRepository(session_with_commit)
     user = UserCreate(
         username=message.from_user.username,
         telegram_id=message.from_user.id,
     )
-    db_user: UserRead = await user_repo.get_or_create_user(user)
+    db_user, created = await user_repo.get_or_create_user(user)
+    if created:
+        await message.answer('Account created successfully.')
+        end_time = time.perf_counter()
+    else:per
+        await message.answer('Account already exists.')
+        end_time = time.perf_counter()
+
+    print(f"⏳ Processing time: {end_time - start_time:.4f} seconds")
 
     if not db_user.name and not db_user.registered:
         await message.answer(

@@ -1,3 +1,5 @@
+from sqlite3 import IntegrityError
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -32,15 +34,23 @@ class UserRepository:
 
         db_user = await self.get_user_by_telegram_id_or_none(user.telegram_id)
 
-        if not db_user:
-            db_user = User(
-                telegram_id=user.telegram_id,
-                username=user.username
-            )
-            self.__session.add(db_user)
+        if db_user:
+            return db_user, False
+
+        db_user = User(**user.model_dump())
+        self.__session.add(db_user)
+
+
+
+        try:
             await self.__session.flush()
 
-        return UserRead.model_validate(db_user)
+        except IntegrityError:
+            await self.__session.rollback()
+
+            return db_user, False
+
+        return db_user, True
 
     async def set_name(
             self,
