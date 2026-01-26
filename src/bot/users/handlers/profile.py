@@ -31,9 +31,9 @@ async def skip_name(message: Message,
 
 
 @router.message(UserNameState.NAME)
-async def set_name(message: Message,
-                   state: FSMContext
-                   ) -> None:
+async def confirm_name(message: Message,
+                       state: FSMContext
+                       ) -> None:
     name = message.text
 
     await state.set_data({'name': name})
@@ -45,5 +45,23 @@ async def set_name(message: Message,
     )
 
     await state.set_state(UserNameState.CONFIRM_NAME)
+
+
+@router.message(UserNameState.CONFIRM_NAME, F.text == 'Confirm')
+async def set_name(message: Message,
+                   state: FSMContext,
+                   session_with_commit: AsyncSession) -> None:
+    user_repo = UserRepository(session_with_commit)
+
+    name = (await state.get_data()).get('name')
+    telegram_id = message.from_user.id
+
+    await user_repo.set_name(
+        telegram_id=telegram_id,
+        name=name
+    )
+
+    text = f'Your name have been successfully set to {name}.!'
+    await message.answer(text=text)
 
 

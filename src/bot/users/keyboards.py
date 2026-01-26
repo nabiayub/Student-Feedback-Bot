@@ -26,5 +26,6 @@ def confirm_name_kb() -> ReplyKeyboardMarkup:
 
     return keyboard.as_markup(
         resize_keyboard=True,  # makes buttons compact
+        one_time_keyboard=True,
     )
 

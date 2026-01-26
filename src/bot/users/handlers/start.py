@@ -12,11 +12,10 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def start_bot(
-        message: types.Message,
-        session_with_commit: AsyncSession,
-        state: FSMContext
-) -> None:
+async def start_bot(message: types.Message,
+                    session_with_commit: AsyncSession,
+                    state: FSMContext
+                    ) -> None:
     """
     Handler for start command
     :param state: FSMContext
@@ -33,7 +32,6 @@ async def start_bot(
         telegram_id=message.from_user.id,
     )
     db_user = await user_repo.get_or_create_user(user)
-    print(db_user.username)
 
     if not db_user.name and not db_user.registered:
         text = 'Enter your name (optional):'

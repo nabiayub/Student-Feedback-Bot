@@ -7,9 +7,9 @@ from src.database.models import User
 from src.schemas.users import UserRead, UserCreate
 
 
-
 class UserRepository:
     """Class to manage all User table queries."""
+
     def __init__(self, session: AsyncSession):
         self.__session = session
 
@@ -40,8 +40,6 @@ class UserRepository:
         db_user = User(**user.model_dump())
         self.__session.add(db_user)
 
-
-
         try:
             await self.__session.flush()
 
@@ -55,7 +53,7 @@ class UserRepository:
     async def set_name(
             self,
             telegram_id: int,
-            name: str=None
+            name: str = None
     ) -> None:
         """
         Method to set name of the user is User table.
@@ -71,34 +69,6 @@ class UserRepository:
             return
 
         if name:
-            pass
+            user.name = name
 
         user.registered = True
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
