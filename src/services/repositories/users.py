@@ -35,7 +35,7 @@ class UserRepository:
         db_user = await self.get_user_by_telegram_id_or_none(user.telegram_id)
 
         if db_user:
-            return db_user, False
+            return db_user
 
         db_user = User(**user.model_dump())
         self.__session.add(db_user)
@@ -48,9 +48,9 @@ class UserRepository:
         except IntegrityError:
             await self.__session.rollback()
 
-            return db_user, False
+            return db_user
 
-        return db_user, True
+        return db_user
 
     async def set_name(
             self,
@@ -73,7 +73,6 @@ class UserRepository:
         if name:
             pass
 
-        print('Registered user')
         user.registered = True
 
 

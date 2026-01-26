@@ -8,7 +8,6 @@ from src.bot.users.states import UserNameState
 from src.schemas.users import UserCreate, UserRead
 from src.services.repositories.users import UserRepository
 
-
 router = Router()
 
 
@@ -28,28 +27,18 @@ async def start_bot(
 
     await message.answer(f'Welcome to AUT Feedback Bot.')
 
-
     user_repo = UserRepository(session_with_commit)
     user = UserCreate(
         username=message.from_user.username,
         telegram_id=message.from_user.id,
     )
-    db_user, created = await user_repo.get_or_create_user(user)
-
+    db_user = await user_repo.get_or_create_user(user)
+    print(db_user.username)
 
     if not db_user.name and not db_user.registered:
+        text = 'Enter your name (optional):'
         await message.answer(
-            text='Enter your name (optional):',
+            text=text,
             reply_markup=cancel_name_kb()
         )
         await state.set_state(UserNameState.NAME)
-
-
-
-
-
-
-
-
-
-
