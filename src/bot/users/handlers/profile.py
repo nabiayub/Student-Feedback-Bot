@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bot.users.keyboards import confirm_name_kb
@@ -27,7 +27,10 @@ async def skip_name(message: Message,
 
     await state.clear()
     text = "Ok, I won’t ask again. Use /setname anytime."
-    await message.answer(text=text)
+    await message.answer(
+        text=text,
+        reply_markup=ReplyKeyboardRemove()
+    )
 
 
 @router.message(UserNameState.NAME)
@@ -62,6 +65,7 @@ async def set_name(message: Message,
     )
 
     text = f'Your name have been successfully set to {name}.!'
-    await message.answer(text=text)
-
-
+    await message.answer(
+        text=text,
+        reply_markup=ReplyKeyboardRemove()
+    )
