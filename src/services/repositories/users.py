@@ -50,7 +50,7 @@ class UserRepository:
 
         return db_user
 
-    async def set_name(
+    async def set_name_and_registered_for_user(
             self,
             telegram_id: int,
             name: str = None

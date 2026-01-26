@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bot.users.keyboards import cancel_name_kb
+from src.bot.users.services.onboarding import OnboardingService
 from src.bot.users.states import UserNameState
 from src.schemas.users import UserCreate, UserRead
 from src.services.repositories.users import UserRepository
@@ -23,20 +24,10 @@ async def start_bot(message: types.Message,
     :param session_with_commit: Session with commit
     :return: None
     """
-
     await message.answer(f'Welcome to AUT Feedback Bot.')
 
-    user_repo = UserRepository(session_with_commit)
-    user = UserCreate(
-        username=message.from_user.username,
-        telegram_id=message.from_user.id,
+    onboarding_service = OnboardingService(session_with_commit)
+    await onboarding_service.process_start(
+        message=message,
+        state=state,
     )
-    db_user = await user_repo.get_or_create_user(user)
-
-    if not db_user.name and not db_user.registered:
-        text = 'Enter your name (optional):'
-        await message.answer(
-            text=text,
-            reply_markup=cancel_name_kb()
-        )
-        await state.set_state(UserNameState.NAME)

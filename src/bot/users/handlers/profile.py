@@ -23,7 +23,7 @@ async def skip_name(message: Message,
     :return: None
     """
     user_repo = UserRepository(session_with_commit)
-    await user_repo.set_name(message.from_user.id)
+    await user_repo.set_name_and_registered_for_user(message.from_user.id)
 
     await state.clear()
     text = "Ok, I won’t ask again. Use /setname anytime."
@@ -59,7 +59,7 @@ async def set_name(message: Message,
     name = (await state.get_data()).get('name')
     telegram_id = message.from_user.id
 
-    await user_repo.set_name(
+    await user_repo.set_name_and_registered_for_user(
         telegram_id=telegram_id,
         name=name
     )
