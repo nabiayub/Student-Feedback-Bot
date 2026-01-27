@@ -5,3 +5,7 @@ class UserNameState(StatesGroup):
     NAME= State()
     CONFIRM_NAME = State()
 
+class MessageState(StatesGroup):
+    MESSAGE = State()
+    CONFIRM_MESSAGE = State()
+
