@@ -1,5 +1,5 @@
 from aiogram import Router, types, F
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,7 +30,7 @@ async def start_bot(message: types.Message,
     )
 
 
-@router.message(F.text == 'Cancel')
+@router.message(Command('cancel'))
 async def cancel_handler(
         message: types.Message,
         state: FSMContext,

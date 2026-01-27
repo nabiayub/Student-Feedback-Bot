@@ -17,5 +17,6 @@ class Menu:
 
         return keyboard.as_markup(
             resize_keyboard=True,
+            is_persistent=True
         )
 

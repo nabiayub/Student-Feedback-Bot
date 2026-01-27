@@ -1,7 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.types import ReplyKeyboardRemove, Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bot.users.keyboards.cancel import cancel_any_handler_kb
@@ -27,7 +27,7 @@ async def start_feedback(
     text = 'Write your feedback:'
     await message.answer(
         text=text,
-        reply_markup=cancel_any_handler_kb()
+        reply_markup=ReplyKeyboardRemove()
     )
 
     await state.set_state(MessageState.CONTENT)
@@ -45,7 +45,6 @@ async def ask_anonymity_handler(
     :param state:
     :return:
     """
-    await message.answer(text='Got ur message', reply_markup=ReplyKeyboardRemove())
     content = message.text
     await state.set_data({'content': content})
 
@@ -53,15 +52,15 @@ async def ask_anonymity_handler(
     text = 'Do you want the feedback sent anonymously?'
     await message.answer(
         text=text,
-        reply_markup=MessageKeyboard.ask_anonymous_kb()
+        reply_markup=MessageKeyboard.asks_yes_or_no()
     )
 
     await state.set_state(MessageState.ANONYMOUS)
 
 
-@router.message(MessageState.ANONYMOUS, F.text.casefold().in_({"yes", "no"}))
+@router.callback_query(MessageState.ANONYMOUS, F.data.casefold().in_({"yes", "no"}))
 async def ask_confirmation_of_feedback(
-        message: types.Message,
+        callback_query: CallbackQuery,
         state: FSMContext
 ) -> None:
     """
@@ -69,7 +68,9 @@ async def ask_confirmation_of_feedback(
     Saves message anonymity to state
     :return: None
     """
-    anonymous = message.text.lower()
+    await callback_query.answer()
+
+    anonymous = callback_query.data.lower()
     print(anonymous)
     match anonymous:
         case 'yes':
@@ -79,18 +80,18 @@ async def ask_confirmation_of_feedback(
 
     await state.update_data({'anonymous': anonymous})
 
-    text = 'Are you sure?'
-    await message.answer(
+    text = 'Do you want to send the feedback?'
+    await callback_query.message.edit_text(
         text=text,
-        reply_markup=MessageKeyboard.confirm_or_skip_message_kb()
+        reply_markup=MessageKeyboard.asks_yes_or_no()
     )
 
     await state.set_state(MessageState.CONFIRM_MESSAGE)
 
 
-@router.message(MessageState.CONFIRM_MESSAGE, F.text == 'Confirm')
+@router.callback_query(MessageState.CONFIRM_MESSAGE, F.data == 'yes')
 async def save_feedback(
-        message: types.Message,
+        callback_query: CallbackQuery,
         state: FSMContext,
         session_with_commit: AsyncSession
 ) -> None:
@@ -98,14 +99,21 @@ async def save_feedback(
     Saves feedback in DB
     :return: None
     """
+    await callback_query.answer()
+
     user_repo = UserRepository(session_with_commit)
 
     content = (await state.get_data()).get('content')
     anonymous = (await state.get_data()).get('anonymous')
-    print(anonymous, content)
+
+    await callback_query.message.delete()
+
+    await state.clear()
 
     text = 'You have successfully sent your feedback'
-    await message.answer(
+    await callback_query.message.answer(
         text=text,
         reply_markup=Menu.main_menu_kb()
     )
+
+
