@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.types import Message
 
 from src.bot.users.keyboards import Profile
+from src.bot.users.keyboards.menu import Menu
 from src.bot.users.states import UserNameState
 from src.database.models import User
 from src.schemas.users import UserCreate
@@ -46,6 +47,7 @@ class OnboardingService:
                 message=message,
                 state=state
             )
+        await self.main_menu(message)
 
     async def get_or_create_user(self, username: str, telegram_id: int) -> User:
         """
@@ -82,4 +84,8 @@ class OnboardingService:
         )
         await state.set_state(UserNameState.NAME)
 
-
+    async def main_menu(self, message: Message) -> None:
+        text = 'Choose your action'
+        await message.answer(
+            text=text,
+            reply_markup=Menu.main_menu())

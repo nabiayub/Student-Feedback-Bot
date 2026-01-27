@@ -1,8 +1,10 @@
-from typing import List
-from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup
+from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 class Profile:
+    """
+    Class for profile keyboards
+    """
     @staticmethod
     def cancel_name_kb() -> ReplyKeyboardMarkup:
         """
