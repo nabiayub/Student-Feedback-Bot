@@ -22,8 +22,8 @@ async def start_bot(message: types.Message,
     """
     await message.answer(f'Welcome to AUT Feedback Bot.')
 
+    # starting the onboarding logic
     onboarding_service = OnboardingService(session_with_commit)
-
     await onboarding_service.start_process(
         message=message,
         state=state,

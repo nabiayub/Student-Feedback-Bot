@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards import confirm_name_kb
+from src.bot.users.keyboards import Profile
 from src.bot.users.states import UserNameState
 from src.services.repositories.users import UserRepository
 
@@ -44,7 +44,7 @@ async def confirm_name(message: Message,
     text = f'Do you confirm {name}?'
     await message.answer(
         text=text,
-        reply_markup=confirm_name_kb()
+        reply_markup=Profile.confirm_name_kb()
     )
 
     await state.set_state(UserNameState.CONFIRM_NAME)

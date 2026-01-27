@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.types import Message
 
-from src.bot.users.keyboards import cancel_name_kb
+from src.bot.users.keyboards import Profile
 from src.bot.users.states import UserNameState
 from src.database.models import User
 from src.schemas.users import UserCreate
@@ -78,6 +78,8 @@ class OnboardingService:
         text = 'Enter your name (optional):'
         await message.answer(
             text=text,
-            reply_markup=cancel_name_kb()
+            reply_markup=Profile.cancel_name_kb()
         )
         await state.set_state(UserNameState.NAME)
+
+
