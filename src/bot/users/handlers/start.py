@@ -3,11 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards import cancel_name_kb
 from src.bot.users.services.onboarding import OnboardingService
-from src.bot.users.states import UserNameState
-from src.schemas.users import UserCreate, UserRead
-from src.services.repositories.users import UserRepository
 
 router = Router()
 
@@ -27,7 +23,8 @@ async def start_bot(message: types.Message,
     await message.answer(f'Welcome to AUT Feedback Bot.')
 
     onboarding_service = OnboardingService(session_with_commit)
-    await onboarding_service.process_start(
+
+    await onboarding_service.start_process(
         message=message,
         state=state,
     )

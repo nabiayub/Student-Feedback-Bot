@@ -29,7 +29,7 @@ class UserRepository:
         """
         Get user by telegram_id or create new one.
         :param user: instance of UserBase schema
-        :return: instqnce of UserRead schema
+        :return: instance of UserRead schema
         """
 
         db_user = await self.get_user_by_telegram_id_or_none(user.telegram_id)
@@ -72,3 +72,10 @@ class UserRepository:
             user.name = name
 
         user.registered = True
+
+    async def update_username(self, user: User) -> User:
+        self.__session.add(user)
+        await self.__session.flush()
+        await self.__session.refresh(user)
+
+        return user

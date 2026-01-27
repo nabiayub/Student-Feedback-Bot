@@ -1,3 +1,5 @@
+from typing import Any, Coroutine
+
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.types import Message
@@ -17,7 +19,7 @@ class OnboardingService:
     def __init__(self, session: AsyncSession):
         self._user_repo = UserRepository(session)
 
-    async def process_start(self, message: Message, state: FSMContext) -> None:
+    async def start_process(self, message: Message, state: FSMContext) -> None:
         """
         Entry point for /start command.
         Ensures the user exists and starts onboarding if needed.
@@ -29,20 +31,23 @@ class OnboardingService:
         username = message.from_user.username
         telegram_id = message.from_user.id
 
-        user: User = await self.create_user_if_not_exists(
+        user: User = await self.get_or_create_user(
             username=username,
             telegram_id=telegram_id,
+        )
+        user = await self.update_username(
+            new_username=message.from_user.username,
+            user=user,
         )
 
         # asks user to write their name if it doesn't exist (only once at first registration)
         if not user.name and not user.registered:
             await self.set_name(
                 message=message,
-                state=state,
+                state=state
             )
 
-
-    async def create_user_if_not_exists(self, username, telegram_id) -> User:
+    async def get_or_create_user(self, username: str, telegram_id: int) -> User:
         """
         Creates the user if not exists and returns DB user.
         username: username of telegram user
@@ -56,6 +61,12 @@ class OnboardingService:
         db_user = await self._user_repo.get_or_create_user(user)
 
         return db_user
+
+    async def update_username(self, new_username: str, user: User) -> User:
+        if user.username != new_username:
+            user.username = new_username
+            await self._user_repo.update_username(user)
+        return user
 
     async def set_name(self, message: Message, state: FSMContext) -> None:
         """
