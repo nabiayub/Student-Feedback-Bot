@@ -28,3 +28,26 @@ async def start_bot(message: types.Message,
         message=message,
         state=state,
     )
+
+
+@router.message(F.text == 'Cancel')
+async def cancel_handler(
+        message: types.Message,
+        state: FSMContext,
+        session_with_commit: AsyncSession,
+        ):
+    """
+    Universal cancel command for any handler
+    :param message: Message
+    :param state: FSMContext
+    :param session_with_commit: Session with commit
+    :return:
+    """
+    await state.clear()
+
+    onboarding_service = OnboardingService(session_with_commit)
+    await onboarding_service.start_process(
+        message=message,
+        state=state,
+    )
+
