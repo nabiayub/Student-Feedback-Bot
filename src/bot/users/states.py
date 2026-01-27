@@ -6,6 +6,7 @@ class UserNameState(StatesGroup):
     CONFIRM_NAME = State()
 
 class MessageState(StatesGroup):
-    MESSAGE = State()
+    CONTENT = State()
+    ANONYMOUS = State()
     CONFIRM_MESSAGE = State()
 

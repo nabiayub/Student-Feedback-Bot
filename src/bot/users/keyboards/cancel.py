@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-def cancel_any_handler() -> ReplyKeyboardMarkup:
+def cancel_any_handler_kb() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
 
     keyboard.button(

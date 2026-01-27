@@ -88,4 +88,4 @@ class OnboardingService:
         text = 'Choose your action'
         await message.answer(
             text=text,
-            reply_markup=Menu.main_menu())
+            reply_markup=Menu.main_menu_kb())

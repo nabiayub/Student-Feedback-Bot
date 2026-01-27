@@ -6,7 +6,7 @@ class Menu:
     Class for menu keyboards
     """
     @staticmethod
-    def main_menu() -> ReplyKeyboardMarkup:
+    def main_menu_kb() -> ReplyKeyboardMarkup:
         keyboard = ReplyKeyboardBuilder()
         keyboard.button(text='Write feedback')
         keyboard.button(text='Profile')
@@ -17,6 +17,5 @@ class Menu:
 
         return keyboard.as_markup(
             resize_keyboard=True,
-            one_time_keyboard=True,
         )
 
