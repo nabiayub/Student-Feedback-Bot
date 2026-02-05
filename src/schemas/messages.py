@@ -8,7 +8,7 @@ from src.schemas.users import UserRead
 
 class MessageBase(BaseModel):
     content: str
-    category: int
+    category_id: int
     is_anonymous: bool
 
 

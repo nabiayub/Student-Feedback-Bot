@@ -1,12 +1,14 @@
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.menu import Menu
 from src.bot.users.keyboards.message import asks_yes_or_no, ask_category_kb, go_back_kb
 from src.bot.users.states import MessageState
 from src.bot.users.utils import go_to_main_menu
+from src.schemas.messages import MessageCreate
+from src.schemas.users import UserCreate
+from src.services.repositories.messages import MessageRepo
 from src.services.repositories.users import UserRepository
 
 router = Router()
@@ -37,6 +39,9 @@ async def ask_to_write_feedback(
         message: types.Message,
         state: FSMContext
 ) -> None:
+    """
+    Receives category and ask user to write message content
+    """
     category = message.text
     categories = {
         'Feedback': 1,
@@ -53,6 +58,7 @@ async def ask_to_write_feedback(
     )
     await state.set_state(MessageState.CONTENT)
 
+
 @router.message(MessageState.CONTENT)
 async def ask_anonymity_handler(
         message: types.Message,
@@ -61,9 +67,6 @@ async def ask_anonymity_handler(
     """
     Asks user whether the feedback is anonymous or not.
     Saves message content to state
-    :param message:
-    :param state:
-    :return:
     """
     content = message.text
 
@@ -96,10 +99,9 @@ async def ask_confirmation_of_feedback(
     """
     Asks user to confirm the feedback.
     Saves message anonymity to state
-    :return: None
     """
-    anonymous = message.text
-    match anonymous:
+    is_anonymous = message.text
+    match is_anonymous:
         case 'Go back':
             text = 'Please enter your message again:'
             await message.answer(
@@ -109,11 +111,11 @@ async def ask_confirmation_of_feedback(
             await state.set_state(MessageState.CONTENT)
             return
         case 'Yes':
-            anonymous = True
+            is_anonymous = True
         case 'No':
-            anonymous = False
+            is_anonymous = False
 
-    await state.update_data({'anonymous': anonymous})
+    await state.update_data({'is_anonymous': is_anonymous})
 
     text = 'Do you want to send the feedback?'
     await message.answer(
@@ -155,19 +157,32 @@ async def save_feedback(
 
         case 'Yes':
             user_repo = UserRepository(session_with_commit)
+            user = await user_repo.get_user_by_telegram_id_or_none(message.from_user.id)
+            if user is None:
+                user_create = UserCreate(
+                    username=message.from_user.username,
+                    telegram_id=message.from_user.id)
+                user = await user_repo.get_or_create_user(user_create)
 
+            user_id: int = user.id
             category_id = (await state.get_data()).get('category_id')
             content = (await state.get_data()).get('content')
-            anonymous = (await state.get_data()).get('anonymous')
+            is_anonymous = (await state.get_data()).get('is_anonymous')
 
-            print(category_id, content, anonymous)
+            new_message = MessageCreate(
+                category_id=category_id,
+                user_id=user_id,
+                content=content,
+                is_anonymous=is_anonymous,
+            )
+
+            message_repo = MessageRepo(session_with_commit)
+            await message_repo.create_message(message=new_message)
 
             text = 'You have successfully sent your feedback'
             await message.answer(
                 text=text,
             )
-
-
 
     await state.clear()
 
