@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.utils import asks_yes_or_no
+from src.bot.users.keyboards.message import asks_yes_or_no
 from src.bot.users.states import UserNameState
 from src.bot.users.utils import go_to_main_menu
 from src.services.repositories.users import UserRepository

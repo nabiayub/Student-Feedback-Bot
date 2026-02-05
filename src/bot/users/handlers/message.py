@@ -4,7 +4,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bot.users.keyboards.menu import Menu
-from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
+from src.bot.users.keyboards.message import asks_yes_or_no, ask_category_kb, go_back_kb
 from src.bot.users.states import MessageState
 from src.bot.users.utils import go_to_main_menu
 from src.services.repositories.users import UserRepository
@@ -23,14 +23,35 @@ async def start_feedback(
     :param state: FSMContext
     :return: None
     """
-    text = 'Write your feedback:'
+    text = 'Choose category:'
     await message.answer(
         text=text,
-        reply_markup=go_to_main_menu_kb()
+        reply_markup=ask_category_kb()
     )
 
-    await state.set_state(MessageState.CONTENT)
+    await state.set_state(MessageState.CATEGORY_ID)
 
+
+@router.message(MessageState.CATEGORY_ID)
+async def ask_to_write_feedback(
+        message: types.Message,
+        state: FSMContext
+) -> None:
+    category = message.text
+    categories = {
+        'Feedback': 1,
+        'Complaint': 2,
+        'Suggestion': 3
+    }
+
+    await state.update_data(category_id=categories[category])
+
+    text = 'Write your message:'
+    await message.answer(
+        text=text,
+        reply_markup=go_back_kb()
+    )
+    await state.set_state(MessageState.CONTENT)
 
 @router.message(MessageState.CONTENT)
 async def ask_anonymity_handler(
@@ -45,6 +66,16 @@ async def ask_anonymity_handler(
     :return:
     """
     content = message.text
+
+    if content == 'Go back':
+        text = 'Please choose category again:'
+        await message.answer(
+            text=text,
+            reply_markup=ask_category_kb()
+        )
+
+        await state.set_state(MessageState.CATEGORY_ID)
+        return
 
     await state.update_data({'content': content})
 
@@ -125,13 +156,18 @@ async def save_feedback(
         case 'Yes':
             user_repo = UserRepository(session_with_commit)
 
+            category_id = (await state.get_data()).get('category_id')
             content = (await state.get_data()).get('content')
             anonymous = (await state.get_data()).get('anonymous')
+
+            print(category_id, content, anonymous)
 
             text = 'You have successfully sent your feedback'
             await message.answer(
                 text=text,
             )
+
+
 
     await state.clear()
 
