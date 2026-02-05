@@ -1,12 +1,11 @@
-from typing import Any, Coroutine
-
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
-from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.types import User as TgUser
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards import Profile
 from src.bot.users.keyboards.menu import Menu
+from src.bot.users.keyboards.profile import cancel_name_kb
+from src.bot.users.keyboards.utils import go_to_main_menu_kb
 from src.bot.users.states import UserNameState
 from src.database.models import User
 from src.schemas.users import UserCreate
@@ -47,6 +46,7 @@ class OnboardingService:
         # First-time registration
         if not user.name and not user.registered:
             await self.set_name(chat_id, state, bot)
+
             return
 
         await self.main_menu(chat_id, bot)
@@ -65,7 +65,7 @@ class OnboardingService:
         await bot.send_message(
             chat_id=chat_id,
             text="Enter your name (optional):",
-            reply_markup=Profile.cancel_name_kb()
+            reply_markup=cancel_name_kb()
         )
         await state.set_state(UserNameState.NAME)
 

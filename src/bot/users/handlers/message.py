@@ -3,7 +3,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.message import asks_yes_or_no, ask_category_kb, go_back_kb
+from src.bot.users.keyboards.message import ask_category_kb, go_back_kb
+from src.bot.users.keyboards.utils import asks_yes_or_no
 from src.bot.users.states import MessageState
 from src.bot.users.utils import go_to_main_menu
 from src.schemas.messages import MessageCreate
