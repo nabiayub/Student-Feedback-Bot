@@ -1,8 +1,9 @@
 from typing import Any, Coroutine
 
+from aiogram import Bot
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
-from aiogram.types import Message
+from aiogram.types import User as TgUser
 
 from src.bot.users.keyboards import Profile
 from src.bot.users.keyboards.menu import Menu
@@ -14,55 +15,45 @@ from src.services.repositories.users import UserRepository
 
 class OnboardingService:
     """
-    Class for onboarding services via /start command
+    Handles user creation, username updates, and onboarding flow.
+    Transport-independent (does not rely on Message/CallbackQuery).
     """
 
     def __init__(self, session: AsyncSession):
         self._user_repo = UserRepository(session)
 
-    async def start_process(self, message: Message, state: FSMContext) -> None:
+    async def start_process(
+        self,
+        user_tg: TgUser,
+        chat_id: int,
+        state: FSMContext,
+        bot: Bot
+    ) -> None:
         """
-        Entry point for /start command.
-        Ensures the user exists and starts onboarding if needed.
-        :param message: Message
-        :param state: FSMContext
-        :return: None
+        Entry point of onboarding logic.
+        Can be called from message or callback handlers.
         """
-        ## creating user when /start if he doesn't exist
-        username = message.from_user.username
-        telegram_id = message.from_user.id
 
-        user: User = await self.get_or_create_user(
-            username=username,
-            telegram_id=telegram_id,
+        user = await self.get_or_create_user(
+            username=user_tg.username,
+            telegram_id=user_tg.id,
         )
+
         user = await self.update_username(
-            new_username=message.from_user.username,
+            new_username=user_tg.username,
             user=user,
         )
 
-        # asks user to write their name if it doesn't exist (only once at first registration)
+        # First-time registration
         if not user.name and not user.registered:
-            await self.set_name(
-                message=message,
-                state=state
-            )
-        await self.main_menu(message)
+            await self.set_name(chat_id, state, bot)
+            return
+
+        await self.main_menu(chat_id, bot)
 
     async def get_or_create_user(self, username: str, telegram_id: int) -> User:
-        """
-        Creates the user if not exists and returns DB user.
-        username: username of telegram user
-        telegram_id: telegram id of telegram user
-        return: User model
-        """
-        user = UserCreate(
-            username=username,
-            telegram_id=telegram_id
-        )
-        db_user = await self._user_repo.get_or_create_user(user)
-
-        return db_user
+        user_create = UserCreate(username=username, telegram_id=telegram_id)
+        return await self._user_repo.get_or_create_user(user_create)
 
     async def update_username(self, new_username: str, user: User) -> User:
         if user.username != new_username:
@@ -70,22 +61,17 @@ class OnboardingService:
             await self._user_repo.update_username(user)
         return user
 
-    async def set_name(self, message: Message, state: FSMContext) -> None:
-        """
-        For the first registration, sends message asking for name.
-        :param message: Message
-        :param state: FSMContext
-        :return: None
-        """
-        text = 'Enter your name (optional):'
-        await message.answer(
-            text=text,
+    async def set_name(self, chat_id: int, state: FSMContext, bot: Bot) -> None:
+        await bot.send_message(
+            chat_id=chat_id,
+            text="Enter your name (optional):",
             reply_markup=Profile.cancel_name_kb()
         )
         await state.set_state(UserNameState.NAME)
 
-    async def main_menu(self, message: Message) -> None:
-        text = 'Choose your action'
-        await message.answer(
-            text=text,
-            reply_markup=Menu.main_menu_kb())
+    async def main_menu(self, chat_id: int, bot: Bot) -> None:
+        await bot.send_message(
+            chat_id=chat_id,
+            text="Choose your action",
+            reply_markup=Menu.main_menu_kb()
+        )

@@ -1,13 +1,12 @@
 from aiogram import Router, types, F
-from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import ReplyKeyboardRemove, Message, CallbackQuery
+from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.cancel import cancel_any_handler_kb
 from src.bot.users.keyboards.menu import Menu
-from src.bot.users.keyboards.message import MessageKeyboard
+from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import MessageState
+from src.bot.users.utils import go_to_main_menu
 from src.services.repositories.users import UserRepository
 
 router = Router()
@@ -27,7 +26,7 @@ async def start_feedback(
     text = 'Write your feedback:'
     await message.answer(
         text=text,
-        reply_markup=ReplyKeyboardRemove()
+        reply_markup=go_to_main_menu_kb()
     )
 
     await state.set_state(MessageState.CONTENT)
@@ -48,19 +47,18 @@ async def ask_anonymity_handler(
     content = message.text
     await state.set_data({'content': content})
 
-
     text = 'Do you want the feedback sent anonymously?'
     await message.answer(
         text=text,
-        reply_markup=MessageKeyboard.asks_yes_or_no()
+        reply_markup=asks_yes_or_no()
     )
 
     await state.set_state(MessageState.ANONYMOUS)
 
 
-@router.callback_query(MessageState.ANONYMOUS, F.data.casefold().in_({"yes", "no"}))
+@router.message(MessageState.ANONYMOUS, F.text.casefold().in_({"yes", "no"}))
 async def ask_confirmation_of_feedback(
-        callback_query: CallbackQuery,
+        message: Message,
         state: FSMContext
 ) -> None:
     """
@@ -68,10 +66,8 @@ async def ask_confirmation_of_feedback(
     Saves message anonymity to state
     :return: None
     """
-    await callback_query.answer()
 
-    anonymous = callback_query.data.lower()
-    print(anonymous)
+    anonymous = message.text.lower()
     match anonymous:
         case 'yes':
             anonymous = True
@@ -81,17 +77,17 @@ async def ask_confirmation_of_feedback(
     await state.update_data({'anonymous': anonymous})
 
     text = 'Do you want to send the feedback?'
-    await callback_query.message.edit_text(
+    await message.answer(
         text=text,
-        reply_markup=MessageKeyboard.asks_yes_or_no()
+        reply_markup=asks_yes_or_no()
     )
 
     await state.set_state(MessageState.CONFIRM_MESSAGE)
 
 
-@router.callback_query(MessageState.CONFIRM_MESSAGE, F.data == 'yes')
+@router.message(MessageState.CONFIRM_MESSAGE, F.text.casefold().in_({"yes", "no"}))
 async def save_feedback(
-        callback_query: CallbackQuery,
+        message: Message,
         state: FSMContext,
         session_with_commit: AsyncSession
 ) -> None:
@@ -99,21 +95,31 @@ async def save_feedback(
     Saves feedback in DB
     :return: None
     """
-    await callback_query.answer()
+    if message.text.casefold() == 'no':
+        text = "Your feedback hasn't been sent."
+        await message.answer(
+            text=text,
+            # reply_markup=Menu.main_menu_kb()
+        )
 
-    user_repo = UserRepository(session_with_commit)
+    elif message.text.casefold() == 'yes':
+        user_repo = UserRepository(session_with_commit)
 
-    content = (await state.get_data()).get('content')
-    anonymous = (await state.get_data()).get('anonymous')
+        content = (await state.get_data()).get('content')
+        anonymous = (await state.get_data()).get('anonymous')
 
-    await callback_query.message.delete()
+        text = 'You have successfully sent your feedback'
+        await message.answer(
+            text=text,
+            # reply_markup=Menu.main_menu_kb()
+        )
 
     await state.clear()
 
-    text = 'You have successfully sent your feedback'
-    await callback_query.message.answer(
-        text=text,
-        reply_markup=Menu.main_menu_kb()
+    await go_to_main_menu(
+        user_tg=message.from_user,
+        chat_id=message.chat.id,
+        bot=message.bot,
+        state=state,
+        session_with_commit=session_with_commit
     )
-
-

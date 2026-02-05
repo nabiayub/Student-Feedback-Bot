@@ -1,6 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
+
 class Profile:
     """
     Class for profile keyboards
@@ -20,20 +21,5 @@ class Profile:
             resize_keyboard=True,
         )
 
-    @staticmethod
-    def confirm_name_kb() -> ReplyKeyboardMarkup:
-        """
-        Asks use to confirm name or cancel.
-        :return: ReplyKeyboardMarkup
-        """
-        keyboard = ReplyKeyboardBuilder()
-        keyboard.button(text='Confirm')
-        keyboard.button(text='Skip')
 
-        keyboard.adjust(1)  # 1 button per row (important for size)
-
-        return keyboard.as_markup(
-            resize_keyboard=True,  # makes buttons compact
-            one_time_keyboard=True,
-        )
 
