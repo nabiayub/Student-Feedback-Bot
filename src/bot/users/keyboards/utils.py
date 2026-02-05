@@ -1,12 +1,16 @@
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from sqlalchemy import Boolean
 
 
-def asks_yes_or_no() -> ReplyKeyboardMarkup:
+def asks_yes_or_no(show_back: bool=False) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
 
     keyboard.button(text='Yes')
     keyboard.button(text='No')
+
+    if show_back:
+        keyboard.button(text='Go back')
 
     keyboard.adjust(2)
 

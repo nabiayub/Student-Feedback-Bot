@@ -45,18 +45,19 @@ async def ask_anonymity_handler(
     :return:
     """
     content = message.text
-    await state.set_data({'content': content})
+
+    await state.update_data({'content': content})
 
     text = 'Do you want the feedback sent anonymously?'
     await message.answer(
         text=text,
-        reply_markup=asks_yes_or_no()
+        reply_markup=asks_yes_or_no(show_back=True)
     )
 
     await state.set_state(MessageState.ANONYMOUS)
 
 
-@router.message(MessageState.ANONYMOUS, F.text.casefold().in_({"yes", "no"}))
+@router.message(MessageState.ANONYMOUS, F.text.casefold().in_({"yes", "no", "go back"}))
 async def ask_confirmation_of_feedback(
         message: Message,
         state: FSMContext
@@ -66,6 +67,14 @@ async def ask_confirmation_of_feedback(
     Saves message anonymity to state
     :return: None
     """
+    if message.text == 'Go back':
+        text = 'Please enter your message again:'
+        await message.answer(
+            text=text,
+        )
+
+        await state.set_state(MessageState.CONTENT)
+        return
 
     anonymous = message.text.lower()
     match anonymous:
@@ -79,13 +88,13 @@ async def ask_confirmation_of_feedback(
     text = 'Do you want to send the feedback?'
     await message.answer(
         text=text,
-        reply_markup=asks_yes_or_no()
+        reply_markup=asks_yes_or_no(show_back=True)
     )
 
     await state.set_state(MessageState.CONFIRM_MESSAGE)
 
 
-@router.message(MessageState.CONFIRM_MESSAGE, F.text.casefold().in_({"yes", "no"}))
+@router.message(MessageState.CONFIRM_MESSAGE, F.text.casefold().in_({"yes", "no", "go back"}))
 async def save_feedback(
         message: Message,
         state: FSMContext,
@@ -95,11 +104,19 @@ async def save_feedback(
     Saves feedback in DB
     :return: None
     """
+    if message.text == 'Go back':
+        text = 'Please choose again:'
+        await message.answer(
+            text=text,
+        )
+
+        await state.set_state(MessageState.ANONYMOUS)
+        return
+
     if message.text.casefold() == 'no':
         text = "Your feedback hasn't been sent."
         await message.answer(
             text=text,
-            # reply_markup=Menu.main_menu_kb()
         )
 
     elif message.text.casefold() == 'yes':
@@ -111,7 +128,6 @@ async def save_feedback(
         text = 'You have successfully sent your feedback'
         await message.answer(
             text=text,
-            # reply_markup=Menu.main_menu_kb()
         )
 
     await state.clear()
