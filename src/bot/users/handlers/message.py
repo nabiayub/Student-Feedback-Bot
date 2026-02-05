@@ -1,6 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bot.users.keyboards.menu import Menu
@@ -57,7 +57,7 @@ async def ask_anonymity_handler(
     await state.set_state(MessageState.ANONYMOUS)
 
 
-@router.message(MessageState.ANONYMOUS, F.text.casefold().in_({"yes", "no", "go back"}))
+@router.message(MessageState.ANONYMOUS, F.text.in_({"Yes", "No", "Go back"}))
 async def ask_confirmation_of_feedback(
         message: Message,
         state: FSMContext
@@ -67,20 +67,19 @@ async def ask_confirmation_of_feedback(
     Saves message anonymity to state
     :return: None
     """
-    if message.text == 'Go back':
-        text = 'Please enter your message again:'
-        await message.answer(
-            text=text,
-        )
-
-        await state.set_state(MessageState.CONTENT)
-        return
-
-    anonymous = message.text.lower()
+    anonymous = message.text
     match anonymous:
-        case 'yes':
+        case 'Go back':
+            text = 'Please enter your message again:'
+            await message.answer(
+                text=text,
+            )
+
+            await state.set_state(MessageState.CONTENT)
+            return
+        case 'Yes':
             anonymous = True
-        case 'no':
+        case 'No':
             anonymous = False
 
     await state.update_data({'anonymous': anonymous})
@@ -94,7 +93,7 @@ async def ask_confirmation_of_feedback(
     await state.set_state(MessageState.CONFIRM_MESSAGE)
 
 
-@router.message(MessageState.CONFIRM_MESSAGE, F.text.casefold().in_({"yes", "no", "go back"}))
+@router.message(MessageState.CONFIRM_MESSAGE, F.text.in_({"Yes", "No", "Go back"}))
 async def save_feedback(
         message: Message,
         state: FSMContext,
@@ -104,31 +103,35 @@ async def save_feedback(
     Saves feedback in DB
     :return: None
     """
-    if message.text == 'Go back':
-        text = 'Please choose again:'
-        await message.answer(
-            text=text,
-        )
 
-        await state.set_state(MessageState.ANONYMOUS)
-        return
+    response = message.text
 
-    if message.text.casefold() == 'no':
-        text = "Your feedback hasn't been sent."
-        await message.answer(
-            text=text,
-        )
+    match response:
+        case 'Go back':
+            text = 'Please choose again:'
+            await message.answer(
+                text=text,
+            )
 
-    elif message.text.casefold() == 'yes':
-        user_repo = UserRepository(session_with_commit)
+            await state.set_state(MessageState.ANONYMOUS)
+            return
 
-        content = (await state.get_data()).get('content')
-        anonymous = (await state.get_data()).get('anonymous')
+        case 'No':
+            text = "Your feedback hasn't been sent."
+            await message.answer(
+                text=text,
+            )
 
-        text = 'You have successfully sent your feedback'
-        await message.answer(
-            text=text,
-        )
+        case 'Yes':
+            user_repo = UserRepository(session_with_commit)
+
+            content = (await state.get_data()).get('content')
+            anonymous = (await state.get_data()).get('anonymous')
+
+            text = 'You have successfully sent your feedback'
+            await message.answer(
+                text=text,
+            )
 
     await state.clear()
 

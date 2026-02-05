@@ -3,7 +3,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from sqlalchemy import Boolean
 
 
-def asks_yes_or_no(show_back: bool=False) -> ReplyKeyboardMarkup:
+def asks_yes_or_no(show_back: bool=False, show_main_menu: bool=False) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
 
     keyboard.button(text='Yes')
@@ -11,6 +11,10 @@ def asks_yes_or_no(show_back: bool=False) -> ReplyKeyboardMarkup:
 
     if show_back:
         keyboard.button(text='Go back')
+
+    if show_main_menu:
+        keyboard.button(text='Go to main menu')
+
 
     keyboard.adjust(2)
 

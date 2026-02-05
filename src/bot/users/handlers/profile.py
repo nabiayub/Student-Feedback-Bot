@@ -1,11 +1,9 @@
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.testing import assert_warns_message
 
-from src.bot.users.keyboards import Profile
 from src.bot.users.keyboards.utils import asks_yes_or_no
 from src.bot.users.states import UserNameState
 from src.bot.users.utils import go_to_main_menu
