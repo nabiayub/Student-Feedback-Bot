@@ -198,3 +198,12 @@ async def process_history_pagination(
     )
 
     await callback.answer()
+
+
+@router.callback_query(HistoryPaginatorCBData.filter(F.action == "ignore"))
+async def ignore_pagination_number(
+        callback: CallbackQuery,
+        callback_data: HistoryPaginatorCBData,
+) -> None:
+    page = callback_data.page
+    await callback.answer(f'You are on page {page}')
