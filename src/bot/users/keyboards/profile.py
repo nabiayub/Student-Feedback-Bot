@@ -13,3 +13,15 @@ def cancel_name_kb() -> ReplyKeyboardMarkup:
     keyboard.adjust(1)
 
     return keyboard.as_markup(resize_keyboard=True)
+
+def profile_kb() -> ReplyKeyboardMarkup:
+    """Keyboard for profile reply buttons: Change name and view history"""
+    keyboard = ReplyKeyboardBuilder()
+
+    keyboard.button(text='Change Name')
+    keyboard.button(text='View History')
+    keyboard.button(text='Go to main menu')
+
+    keyboard.adjust(2, 1)
+
+    return keyboard.as_markup(resize_keyboard=True)

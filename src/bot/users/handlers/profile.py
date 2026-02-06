@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.bot.users.keyboards.profile import profile_kb
 from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import UserNameState
 from src.bot.users.utils import go_to_main_menu
@@ -11,6 +12,13 @@ from src.services.repositories.users import UserRepository
 
 router = Router()
 
+@router.message(F.text == 'Profile')
+async def profile_view(message: Message):
+    text = 'Choose 👇'
+    await message.answer(
+        text=text,
+        reply_markup=profile_kb()
+    )
 
 @router.message(StateFilter(UserNameState), F.text == 'Skip')
 async def skip_name(
