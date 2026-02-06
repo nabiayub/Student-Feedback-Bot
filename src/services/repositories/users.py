@@ -1,10 +1,11 @@
 from sqlite3 import IntegrityError
+from xml.dom.domreg import registered
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import User
-from src.schemas.users import UserRead, UserCreate
+from src.schemas.users import UserCreate
 
 
 class UserRepository:
@@ -71,7 +72,8 @@ class UserRepository:
         if name:
             user.name = name
 
-        user.registered = True
+        if not registered:
+            user.registered = True
 
     async def update_username(self, user: User) -> User:
         self.__session.add(user)
@@ -79,3 +81,8 @@ class UserRepository:
         await self.__session.refresh(user)
 
         return user
+
+    async def get_name_by_telegram_id(self, telegram_id: int) -> str:
+        user: User | None = await self.get_user_by_telegram_id_or_none(telegram_id)
+
+        return user.name if user else None

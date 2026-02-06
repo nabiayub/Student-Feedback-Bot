@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.profile import profile_kb
+from src.bot.users.keyboards.profile import profile_kb, cancel_name_kb
 from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import UserNameState
 from src.bot.users.utils import go_to_main_menu
@@ -12,13 +12,36 @@ from src.services.repositories.users import UserRepository
 
 router = Router()
 
+
 @router.message(F.text == 'Profile')
-async def profile_view(message: Message):
-    text = 'Choose 👇'
+async def profile_view(
+        message: Message,
+        session_without_commit: AsyncSession,
+) -> None:
+    user_repo = UserRepository(session_without_commit)
+    user_name = await user_repo.get_name_by_telegram_id(message.from_user.id)
+
+    text = ('Profile'
+            f'Your name {user_name}\n'
+            'Choose 👇')
+
     await message.answer(
         text=text,
         reply_markup=profile_kb()
     )
+
+
+@router.message(F.text == 'Change Name')
+async def start_changing_name(
+        message: Message,
+        state: FSMContext,
+) -> None:
+    await message.answer(
+        text="Enter your name (optional):",
+        reply_markup=cancel_name_kb()
+    )
+    await state.set_state(UserNameState.NAME)
+
 
 @router.message(StateFilter(UserNameState), F.text == 'Skip')
 async def skip_name(
@@ -32,7 +55,6 @@ async def skip_name(
 
     user_repo = UserRepository(session_with_commit)
     await user_repo.set_name_and_registered_for_user(message.from_user.id)
-
 
     await go_to_main_menu(
         user_tg=message.from_user,
@@ -84,22 +106,27 @@ async def save_name(
 
     match response:
         case 'No':
+            text = f'You did not change your name.'
+            await message.answer(
+                text=text,
+                reply_markup=ReplyKeyboardRemove()
+            )
+
             await user_repo.set_name_and_registered_for_user(
                 telegram_id=telegram_id,
             )
-
         case 'Yes':
             name = (await state.get_data()).get('name')
-
-            await user_repo.set_name_and_registered_for_user(
-                telegram_id=telegram_id,
-                name=name
-            )
 
             text = f'Your name have been successfully set to {name}!'
             await message.answer(
                 text=text,
                 reply_markup=ReplyKeyboardRemove()
+            )
+
+            await user_repo.set_name_and_registered_for_user(
+                telegram_id=telegram_id,
+                name=name
             )
 
     await state.clear()
