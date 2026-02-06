@@ -2,9 +2,10 @@ from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.testing import assert_warns_message
 
 from src.bot.users.keyboards.message import ask_category_kb, go_back_kb
-from src.bot.users.keyboards.utils import asks_yes_or_no
+from src.bot.users.keyboards.utils import asks_yes_or_no, main_menu_kb
 from src.bot.users.states import MessageState
 from src.bot.users.utils import go_to_main_menu
 from src.schemas.messages import MessageCreate
@@ -49,6 +50,15 @@ async def ask_to_write_feedback(
         'Complaint': 2,
         'Suggestion': 3
     }
+
+    if category not in categories.keys():
+        await message.answer(
+            text='Choose category:',
+            reply_markup=ask_category_kb()
+        )
+
+        return
+
 
     await state.update_data(category_id=categories[category])
 
@@ -157,6 +167,12 @@ async def save_feedback(
             )
 
         case 'Yes':
+            text = 'You have successfully sent your feedback'
+            await message.answer(
+                text=text,
+                reply_markup=main_menu_kb()
+            )
+
             user_repo = UserRepository(session_with_commit)
             user = await user_repo.get_user_by_telegram_id_or_none(message.from_user.id)
             if user is None:
@@ -180,10 +196,6 @@ async def save_feedback(
             message_repo = MessageRepo(session_with_commit)
             await message_repo.create_message(message=new_message)
 
-            text = 'You have successfully sent your feedback'
-            await message.answer(
-                text=text,
-            )
 
     await state.clear()
 

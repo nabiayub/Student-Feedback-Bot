@@ -31,12 +31,12 @@ class Message(Base):
 
     user: Mapped["User"] = relationship(
         "User",
-        back_populates="messages"
+        back_populates="messages",
     )
 
     category: Mapped["Category"] = relationship(
         "Category",
-        back_populates="messages"
+        back_populates="messages",
     )
 
     def __repr__(self):

@@ -1,13 +1,16 @@
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.profile import profile_kb, cancel_name_kb
+from src.bot.users.keyboards.profile import profile_kb, cancel_name_kb, HistoryPaginatorCBData, get_history_paginator_cb
 from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import UserNameState
 from src.bot.users.utils import go_to_main_menu
+from src.bot.utils import format_history_text
+from src.schemas.messages import MessageRead
+from src.services.repositories.messages import MessageRepo
 from src.services.repositories.users import UserRepository
 
 router = Router()
@@ -138,3 +141,60 @@ async def save_name(
         state=state,
         session_with_commit=session_with_commit
     )
+
+
+@router.message(F.text == 'Show history')
+async def show_history_first(
+        message: Message,
+        session_without_commit: AsyncSession,
+) -> None:
+    """Handler that shows history of message of users"""
+    page = 1
+
+    message_repo = MessageRepo(session_without_commit)
+    messages, has_next = await message_repo.get_messages_of_one_user(
+        telegram_id=message.from_user.id,
+        page=page
+    )
+
+    if not messages:
+        await message.answer('Your history is empty.')
+        return
+
+    text = format_history_text(messages)
+
+    await message.answer(
+        text=text,
+        reply_markup=get_history_paginator_cb(
+            page=page,
+            has_next=has_next
+        ),
+    )
+
+
+@router.callback_query(HistoryPaginatorCBData.filter(F.action != "ignore"))
+async def process_history_pagination(
+        callback: CallbackQuery,
+        callback_data: HistoryPaginatorCBData,
+        session_without_commit: AsyncSession,
+) -> None:
+    """Handler that handles the pagination of history of message of users"""
+    page = callback_data.page
+
+    message_repo = MessageRepo(session_without_commit)
+    messages, has_next = await message_repo.get_messages_of_one_user(
+        telegram_id=callback.from_user.id,
+        page=page
+    )
+
+    text = format_history_text(messages)
+
+    await callback.message.edit_text(
+        text=text,
+        reply_markup=get_history_paginator_cb(
+            page=page,
+            has_next=has_next
+        ),
+    )
+
+    await callback.answer()

@@ -2,8 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
-from src.schemas.categories import CategoryRead
-from src.schemas.users import UserRead
+from src.schemas.categories import CategoryBase
 
 
 class MessageBase(BaseModel):
@@ -16,12 +15,10 @@ class MessageCreate(MessageBase):
     user_id: int
 
 class MessageRead(BaseModel):
-    id: int
     created_at: datetime
-    updated_at: datetime
 
-    user: UserRead
-    category: CategoryRead
+    content: str
+    category: CategoryBase
 
     model_config = ConfigDict(from_attributes=True)
 

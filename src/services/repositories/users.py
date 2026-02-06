@@ -4,7 +4,8 @@ from xml.dom.domreg import registered
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.models import User
+from src.database.models import User, Message
+from src.schemas.messages import MessageRead
 from src.schemas.users import UserCreate
 
 
@@ -76,6 +77,7 @@ class UserRepository:
             user.registered = True
 
     async def update_username(self, user: User) -> User:
+        """Updates username in database"""
         self.__session.add(user)
         await self.__session.flush()
         await self.__session.refresh(user)
@@ -83,6 +85,10 @@ class UserRepository:
         return user
 
     async def get_name_by_telegram_id(self, telegram_id: int) -> str:
+        """Returns user's name by telegram id."""
         user: User | None = await self.get_user_by_telegram_id_or_none(telegram_id)
 
         return user.name if user else None
+
+
+

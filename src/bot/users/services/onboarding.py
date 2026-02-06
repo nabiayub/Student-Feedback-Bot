@@ -3,9 +3,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import User as TgUser
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.menu import Menu
 from src.bot.users.keyboards.profile import cancel_name_kb
-from src.bot.users.keyboards.utils import go_to_main_menu_kb
+from src.bot.users.keyboards.utils import go_to_main_menu_kb, main_menu_kb
 from src.bot.users.states import UserNameState
 from src.database.models import User
 from src.schemas.users import UserCreate
@@ -73,5 +72,5 @@ class OnboardingService:
         await bot.send_message(
             chat_id=chat_id,
             text="Choose your action",
-            reply_markup=Menu.main_menu_kb()
+            reply_markup=main_menu_kb()
         )

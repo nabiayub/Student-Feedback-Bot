@@ -24,7 +24,7 @@ class User(Base):
     messages: Mapped[List["Message"] | None] = relationship(
         "Message",
         back_populates="user",
-        passive_deletes=True
+        passive_deletes=True,
     )
 
     def __repr__(self):

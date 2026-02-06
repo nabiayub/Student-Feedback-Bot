@@ -25,7 +25,6 @@ def asks_yes_or_no(show_back: bool = False, show_main_menu: bool = False) -> Rep
     return keyboard.as_markup(resize_keyboard=True)
 
 
-
 def go_to_main_menu_kb() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
 
@@ -34,3 +33,16 @@ def go_to_main_menu_kb() -> ReplyKeyboardMarkup:
     keyboard.adjust(1)
 
     return keyboard.as_markup(resize_keyboard=True)
+
+
+def main_menu_kb() -> ReplyKeyboardMarkup:
+    keyboard = ReplyKeyboardBuilder()
+    keyboard.button(text='Write feedback')
+    keyboard.button(text='Profile')
+    keyboard.button(text='About')
+
+    keyboard.adjust(1, 2)
+
+    return keyboard.as_markup(
+        resize_keyboard=True,
+    )

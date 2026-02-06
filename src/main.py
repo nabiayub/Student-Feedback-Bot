@@ -1,3 +1,5 @@
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 
 from config.settings import settings
 
@@ -15,7 +17,11 @@ async def main() -> None:
     Entry point for telegram bot.
     :return: None
     """
-    bot = Bot(token=settings.BOT_TOKEN)
+    bot = Bot(
+        token=settings.BOT_TOKEN,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+    )
+
     dp = Dispatcher(storage=MemoryStorage())
 
     # register middlewares

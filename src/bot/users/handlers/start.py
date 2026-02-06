@@ -21,7 +21,7 @@ async def start_bot(message: types.Message,
     :param session_with_commit: Session with commit
     :return: None
     """
-    await message.answer(f'Welcome to AUT Feedback Bot.')
+    await message.answer('Welcome to AUT Feedback Bot.')
 
     # starting the onboarding logic
     await go_to_main_menu(
