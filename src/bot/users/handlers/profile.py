@@ -213,5 +213,6 @@ async def ignore_pagination_number(
         callback: CallbackQuery,
         callback_data: HistoryPaginatorCBData,
 ) -> None:
+    """Show user on which page he is during history"""
     page = callback_data.page
     await callback.answer(f'You are on page {page}')
