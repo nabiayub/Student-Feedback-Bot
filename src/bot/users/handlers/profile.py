@@ -16,7 +16,7 @@ from src.services.repositories.users import UserRepository
 router = Router()
 
 
-@router.message(F.text == 'Profile')
+@router.message(F.text == '👤 Profile')
 async def profile_view(
         message: Message,
         session_without_commit: AsyncSession,
@@ -86,7 +86,7 @@ async def confirm_name(
     await state.set_state(UserNameState.CONFIRM_NAME)
 
 
-@router.message(UserNameState.CONFIRM_NAME, F.text.in_({"Yes", "No", "Go back"}))
+@router.message(UserNameState.CONFIRM_NAME, F.text.in_({"Yes", "No", "⬅️ Go back"}))
 async def save_name(
         message: Message,
         state: FSMContext,
@@ -96,7 +96,7 @@ async def save_name(
     Saves name and registered=True to db
     """
     response = message.text
-    if response == "Go back":
+    if response == "⬅️ Go back":
         text = "Enter your name again (optional):"
         await message.answer(
             text=text,

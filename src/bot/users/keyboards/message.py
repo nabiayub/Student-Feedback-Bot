@@ -14,7 +14,7 @@ def ask_category_kb() -> ReplyKeyboardMarkup:
     keyboard.button(text='Feedback')
     keyboard.button(text='Complaint')
     keyboard.button(text='Suggestion')
-    keyboard.button(text='Go to main menu')
+    keyboard.button(text='⬅️ Back to Menu')
 
     keyboard.adjust(3, 1)
 
@@ -28,7 +28,7 @@ def go_back_kb() -> ReplyKeyboardMarkup:
     """
     keyboard = ReplyKeyboardBuilder()
 
-    keyboard.button(text='Go back')
+    keyboard.button(text='⬅️ Go back')
 
     keyboard.adjust(1)
 

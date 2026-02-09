@@ -71,6 +71,6 @@ class OnboardingService:
     async def main_menu(self, chat_id: int, bot: Bot) -> None:
         await bot.send_message(
             chat_id=chat_id,
-            text="Choose your action",
+            text='You are on the main page. Please choose a section below 👇',
             reply_markup=main_menu_kb()
         )

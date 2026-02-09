@@ -55,7 +55,7 @@ async def start_bot(message: types.Message,
 
 
 
-@router.message(F.text == 'Go to main menu')
+@router.message(F.text == '⬅️ Back to Menu')
 async def go_to_main_menu_handler(
         message: types.Message,
         state: FSMContext,

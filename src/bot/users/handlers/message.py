@@ -1,6 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.testing import assert_warns_message
 
@@ -16,7 +16,7 @@ from src.services.repositories.users import UserRepository
 router = Router()
 
 
-@router.message(F.text == 'Write feedback')
+@router.message(F.text == '✍️ Write feedback')
 async def start_feedback(
         message: types.Message,
         state: FSMContext
@@ -27,7 +27,7 @@ async def start_feedback(
     :param state: FSMContext
     :return: None
     """
-    text = 'Choose category:'
+    text = '📂 Select a category below:'
     await message.answer(
         text=text,
         reply_markup=ask_category_kb()
@@ -53,7 +53,7 @@ async def ask_to_write_feedback(
 
     if category not in categories.keys():
         await message.answer(
-            text='Choose category:',
+            text='📂 Select a category below:',
             reply_markup=ask_category_kb()
         )
 
@@ -62,7 +62,7 @@ async def ask_to_write_feedback(
 
     await state.update_data(category_id=categories[category])
 
-    text = 'Write your message:'
+    text = '✍️ Type your message:'
     await message.answer(
         text=text,
         reply_markup=go_back_kb()
@@ -81,8 +81,8 @@ async def ask_anonymity_handler(
     """
     content = message.text
 
-    if content == 'Go back':
-        text = 'Please choose category again:'
+    if content == '⬅️ Go back':
+        text = '📂 Select a category below:'
         await message.answer(
             text=text,
             reply_markup=ask_category_kb()
@@ -93,16 +93,23 @@ async def ask_anonymity_handler(
 
     await state.update_data({'content': content})
 
-    text = 'Do you want the feedback sent anonymously?'
+    # text = "🔒 Do you want to send this <i>anonymously</i>. (Your name won't be shown to the administrator)."
+    text = ('<b>Choose how to send:</b>\n\n'
+            '🔒 <b>Anonymously:</b> Your identity stays hidden.\n'
+            '📌 <b>Publicly:</b> Your name will be shown to administrator')
     await message.answer(
         text=text,
-        reply_markup=asks_yes_or_no(show_back=True)
+        reply_markup=asks_yes_or_no(
+            yes_text='🔒 Anonymously',
+            no_text='📌 Publicly',
+            show_back=True
+        )
     )
 
     await state.set_state(MessageState.ANONYMOUS)
 
 
-@router.message(MessageState.ANONYMOUS, F.text.in_({"Yes", "No", "Go back"}))
+@router.message(MessageState.ANONYMOUS, F.text.in_({"🔒 Anonymously", "📌 Publicly", "⬅️ Go back"}))
 async def ask_confirmation_of_feedback(
         message: Message,
         state: FSMContext
@@ -113,31 +120,35 @@ async def ask_confirmation_of_feedback(
     """
     is_anonymous = message.text
     match is_anonymous:
-        case 'Go back':
-            text = 'Please enter your message again:'
+        case '⬅️ Go back':
+            text = '✍️ Type your message:'
             await message.answer(
                 text=text,
             )
 
             await state.set_state(MessageState.CONTENT)
             return
-        case 'Yes':
+        case '🔒 Anonymously':
             is_anonymous = True
-        case 'No':
+        case '📌 Publicly':
             is_anonymous = False
 
     await state.update_data({'is_anonymous': is_anonymous})
 
-    text = 'Do you want to send the feedback?'
+    text = '📤 Confirm: would you like to send this message?'
     await message.answer(
         text=text,
-        reply_markup=asks_yes_or_no(show_back=True)
+        reply_markup=asks_yes_or_no(
+            yes_text='✅ Confirm',
+            no_text='❌ Cancel',
+            show_back=True
+        )
     )
 
     await state.set_state(MessageState.CONFIRM_MESSAGE)
 
 
-@router.message(MessageState.CONFIRM_MESSAGE, F.text.in_({"Yes", "No", "Go back"}))
+@router.message(MessageState.CONFIRM_MESSAGE, F.text.in_({"✅ Confirm", "❌ Cancel", "⬅️ Go back"}))
 async def save_feedback(
         message: Message,
         state: FSMContext,
@@ -151,26 +162,33 @@ async def save_feedback(
     response = message.text
 
     match response:
-        case 'Go back':
-            text = 'Please choose again:'
+        case '⬅️ Go back':
+            text = ('<b>Choose how to send:</b>\n\n'
+                    '🔒 <b>Anonymously:</b> Your identity stays hidden.\n'
+                    '📎 <b>Publicly:</b> Your name will be shown to administrator')
             await message.answer(
                 text=text,
+                reply_markup=asks_yes_or_no(
+                    yes_text='🔒 Anonymously',
+                    no_text='📌 Publicly',
+                    show_back=True
+                )
             )
 
             await state.set_state(MessageState.ANONYMOUS)
             return
 
-        case 'No':
-            text = "Your feedback hasn't been sent."
+        case '❌ Cancel':
+            text = '🗑️ <b>Cancelled.</b> Your feedback hasn\'t been sent.'
             await message.answer(
                 text=text,
             )
 
-        case 'Yes':
-            text = 'You have successfully sent your feedback'
+        case '✅ Confirm':
+            text = '✅ <b>Feedback Sent!</b> We appreciate your input.'
             await message.answer(
                 text=text,
-                reply_markup=main_menu_kb()
+                reply_markup=ReplyKeyboardRemove()
             )
 
             user_repo = UserRepository(session_with_commit)

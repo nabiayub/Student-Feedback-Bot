@@ -5,7 +5,7 @@ from src.schemas.messages import MessageRead
 
 router = Router()
 
-@router.message(F.text == 'About')
+@router.message(F.text == 'ℹ️ About')
 async def about_handler(message: Message):
     about_text = (
         "<b>🎓 AUT Feedback Portal</b>\n\n"

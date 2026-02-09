@@ -27,7 +27,7 @@ def profile_kb() -> ReplyKeyboardMarkup:
 
     keyboard.button(text='Change Name')
     keyboard.button(text='Show history')
-    keyboard.button(text='Go to main menu')
+    keyboard.button(text='⬅️ Back to Menu')
 
     keyboard.adjust(2, 1)
 
