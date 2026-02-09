@@ -24,9 +24,9 @@ async def profile_view(
     user_repo = UserRepository(session_without_commit)
     user_name = await user_repo.get_name_by_telegram_id(message.from_user.id)
 
-    text = ('Profile'
-            f'Your name {user_name}\n'
-            'Choose 👇')
+    text = (f"<b>👤 Profile</b>\n"
+            f"<b>Name:</b> {user_name if user_name else 'Missing'}\n\n"
+            "Choose an option 👇")
 
     await message.answer(
         text=text,
@@ -40,7 +40,7 @@ async def start_changing_name(
         state: FSMContext,
 ) -> None:
     await message.answer(
-        text="Enter your name (optional):",
+        text='<b>Enter your name:</b>\n<i>(Or tap skip below)</i> ⏩',
         reply_markup=cancel_name_kb()
     )
     await state.set_state(UserNameState.NAME)
@@ -77,7 +77,7 @@ async def confirm_name(
 
     await state.set_data({'name': name})
 
-    text = f'Do you confirm {name}?'
+    text = f"Confirm name: <b>{name}</b>? 👇"
     await message.answer(
         text=text,
         reply_markup=asks_yes_or_no(show_back=True)

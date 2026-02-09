@@ -9,7 +9,7 @@ def format_history_text(messages: list[MessageRead], page: int, limit: int) -> s
     if not messages:
         return 'Your history is empty.'
 
-    history_text = "📜 <b>Ваша история сообщений:</b>\n"
+    history_text = "📜 <b>Your messages history:</b>\n"
     feedback_count = ((page - 1) * limit) + 1
 
     for msg in messages:
