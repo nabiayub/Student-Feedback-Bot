@@ -34,7 +34,7 @@ async def profile_view(
     )
 
 
-@router.message(F.text == 'Change Name')
+@router.message(F.text == '🖋 Change Name')
 async def start_changing_name(
         message: Message,
         state: FSMContext,
@@ -46,26 +46,23 @@ async def start_changing_name(
     await state.set_state(UserNameState.NAME)
 
 
-@router.message(StateFilter(UserNameState), F.text == 'Skip')
+@router.message(StateFilter(UserNameState), F.text == '⏩ Skip')
 async def skip_name(
         message: Message,
         state: FSMContext,
-        session_with_commit: AsyncSession) -> None:
+        session_with_commit: AsyncSession,
+        session_without_commit: AsyncSession,
+) -> None:
     """
     Cancels setting name
     """
     await state.clear()
 
+    await profile_view(message=message, session_without_commit=session_without_commit)
+
     user_repo = UserRepository(session_with_commit)
     await user_repo.set_name_and_registered_for_user(message.from_user.id)
 
-    await go_to_main_menu(
-        user_tg=message.from_user,
-        chat_id=message.from_user.id,
-        bot=message.bot,
-        state=state,
-        session_with_commit=session_with_commit
-    )
 
 
 @router.message(UserNameState.NAME)
@@ -80,17 +77,22 @@ async def confirm_name(
     text = f"Confirm name: <b>{name}</b>? 👇"
     await message.answer(
         text=text,
-        reply_markup=asks_yes_or_no(show_back=True)
+        reply_markup=asks_yes_or_no(
+            yes_text='✅ Confirm',
+            no_text='❌ Cancel',
+            show_back=True
+        )
     )
 
     await state.set_state(UserNameState.CONFIRM_NAME)
 
 
-@router.message(UserNameState.CONFIRM_NAME, F.text.in_({"Yes", "No", "⬅️ Go back"}))
+@router.message(UserNameState.CONFIRM_NAME, F.text.in_({"✅ Confirm", "❌ Cancel", "⬅️ Go back"}))
 async def save_name(
         message: Message,
         state: FSMContext,
-        session_with_commit: AsyncSession
+        session_with_commit: AsyncSession,
+        session_without_commit: AsyncSession,
 ) -> None:
     """
     Saves name and registered=True to db
@@ -108,8 +110,9 @@ async def save_name(
     telegram_id = message.from_user.id
 
     match response:
-        case 'No':
-            text = f'You did not change your name.'
+        case '❌ Cancel':
+            text = ('🚫 <b>Cancelled.</b> '
+                    'No changes were made to your name.')
             await message.answer(
                 text=text,
                 reply_markup=ReplyKeyboardRemove()
@@ -118,10 +121,10 @@ async def save_name(
             await user_repo.set_name_and_registered_for_user(
                 telegram_id=telegram_id,
             )
-        case 'Yes':
+        case '✅ Confirm':
             name = (await state.get_data()).get('name')
 
-            text = f'Your name have been successfully set to {name}!'
+            text = f'✅ <b>Success!</b> Your name has been set to: <code>{name}</code>'
             await message.answer(
                 text=text,
                 reply_markup=ReplyKeyboardRemove()
@@ -134,16 +137,10 @@ async def save_name(
 
     await state.clear()
 
-    await go_to_main_menu(
-        user_tg=message.from_user,
-        chat_id=message.from_user.id,
-        bot=message.bot,
-        state=state,
-        session_with_commit=session_with_commit
-    )
+    await profile_view(message=message, session_without_commit=session_without_commit)
 
 
-@router.message(F.text == 'Show history')
+@router.message(F.text == '📜 Show history')
 async def show_history_first(
         message: Message,
         session_without_commit: AsyncSession,
@@ -156,10 +153,6 @@ async def show_history_first(
         telegram_id=message.from_user.id,
         page=page
     )
-
-    if not messages:
-        await message.answer('Your history is empty.')
-        return
 
     text = format_history_text(
         messages=messages,

@@ -15,7 +15,7 @@ def cancel_name_kb() -> ReplyKeyboardMarkup:
     :return: ReplyKeyboardMarkup instance
     """
     keyboard = ReplyKeyboardBuilder()
-    keyboard.button(text='Skip')
+    keyboard.button(text='⏩ Skip')
 
     keyboard.adjust(1)
 
@@ -25,8 +25,8 @@ def profile_kb() -> ReplyKeyboardMarkup:
     """Keyboard for profile reply buttons: Change name and view history"""
     keyboard = ReplyKeyboardBuilder()
 
-    keyboard.button(text='Change Name')
-    keyboard.button(text='Show history')
+    keyboard.button(text='🖋 Change Name')
+    keyboard.button(text='📜 Show history')
     keyboard.button(text='⬅️ Back to Menu')
 
     keyboard.adjust(2, 1)

@@ -52,4 +52,5 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
 
     return keyboard.as_markup(
         resize_keyboard=True,
+        is_persistant=True,
     )
