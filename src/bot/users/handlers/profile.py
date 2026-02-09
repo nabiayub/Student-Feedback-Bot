@@ -161,7 +161,11 @@ async def show_history_first(
         await message.answer('Your history is empty.')
         return
 
-    text = format_history_text(messages)
+    text = format_history_text(
+        messages=messages,
+        page=page,
+        limit=5
+    )
 
     await message.answer(
         text=text,
@@ -187,7 +191,11 @@ async def process_history_pagination(
         page=page
     )
 
-    text = format_history_text(messages)
+    text = format_history_text(
+        messages=messages,
+        page=page,
+        limit=5
+    )
 
     await callback.message.edit_text(
         text=text,
