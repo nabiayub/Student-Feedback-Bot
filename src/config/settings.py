@@ -1,5 +1,4 @@
 import os
-from typing import List
 from loguru import logger as loguru_logger
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -10,7 +9,10 @@ class Settings(BaseSettings):
     Bot settings loaded from .env using Pydantic Settings.
     """
     BOT_TOKEN: str
-    ADMIN_ID: List[int]
+
+    ADMIN_ID: list[int]
+    SUPERUSER_ID: int
+
     DATABASE_URL: str
     FORMAT_LOG: str = "{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}"
     LOG_ROTATION: str = "10 MB"
