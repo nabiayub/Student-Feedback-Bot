@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     """
     BOT_TOKEN: str
 
-    ADMIN_ID: list[int]
+    ADMIN_IDS: list[int]
     SUPERUSER_ID: int
 
     DATABASE_URL: str

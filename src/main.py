@@ -1,5 +1,6 @@
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.exceptions import TelegramBadRequest
 
 from config.settings import settings
 
@@ -29,10 +30,17 @@ async def main() -> None:
 
     register_all_routers(dp)
 
-    await bot.send_message(
-        chat_id=settings.ADMIN_ID[0],
-        text='Bot is activated'
-    )
+    try:
+        await bot.send_message(
+            chat_id=settings.ADMIN_IDS[0],
+            text='Bot is activated'
+        )
+    except Exception as e:
+        print("---------------------------------------")
+        print(f"FAILED to send activation message.")
+        print(f"Reason: {e}")
+        print("FIX: Go to your new bot and press START.")
+        print("---------------------------------------")
 
     await dp.start_polling(bot)
 
