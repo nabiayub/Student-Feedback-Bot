@@ -12,13 +12,14 @@ class MessageRepo:
     def __init__(self, session: AsyncSession):
         self.__session = session
 
-    async def create_message(self, message: MessageCreate) -> None:
+    async def create_message_and_return_message_id(self, message: MessageCreate) -> None:
         """Creates new message in database"""
         db_message = Message(**message.model_dump())
         self.__session.add(db_message)
 
         try:
             await self.__session.flush()
+            return db_message.id
 
         except IntegrityError:
             await self.__session.rollback()
@@ -28,7 +29,7 @@ class MessageRepo:
             telegram_id: int,
             page: int,
             limit: int = 5
-    ) -> tuple[list[MessageRead] | None, bool] :
+    ) -> tuple[list[MessageRead] | None, bool]:
         """Returns messages of user's by telegram id."""
         offset = (page - 1) * limit
 

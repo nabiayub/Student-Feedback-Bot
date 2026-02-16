@@ -1,4 +1,4 @@
-from aiogram import Router, types, F
+from aiogram import Router, types, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +8,8 @@ from src.bot.users.keyboards.message import ask_category_kb, go_back_kb
 from src.bot.users.keyboards.utils import asks_yes_or_no, main_menu_kb
 from src.bot.users.states import MessageState
 from src.bot.users.utils import go_to_main_menu
-from src.schemas.messages import MessageCreate
+from src.config.settings import settings
+from src.schemas.messages import MessageCreate, MessageForTelegramGroup
 from src.schemas.users import UserCreate
 from src.services.repositories.messages import MessageRepo
 from src.services.repositories.users import UserRepository
@@ -59,8 +60,7 @@ async def ask_to_write_feedback(
 
         return
 
-
-    await state.update_data(category_id=categories[category])
+    await state.update_data(category_id=categories[category], category_title=category)
 
     text = '✍️ Type your message:'
     await message.answer(
@@ -148,6 +148,16 @@ async def ask_confirmation_of_feedback(
     await state.set_state(MessageState.CONFIRM_MESSAGE)
 
 
+async def send_message_to_group(
+        bot: Bot,
+        group_message: MessageForTelegramGroup
+):
+    text = group_message.create_text_for_telegram_message()
+    await bot.send_message(
+        chat_id=settings.GROUP_CHAT_ID,
+        text=text,
+    )
+
 @router.message(MessageState.CONFIRM_MESSAGE, F.text.in_({"✅ Confirm", "❌ Cancel", "⬅️ Go back"}))
 async def save_feedback(
         message: Message,
@@ -200,7 +210,9 @@ async def save_feedback(
                 user = await user_repo.get_or_create_user(user_create)
 
             user_id: int = user.id
+            name = user.name
             category_id = (await state.get_data()).get('category_id')
+            category_title = (await state.get_data()).get('category_title')
             content = (await state.get_data()).get('content')
             is_anonymous = (await state.get_data()).get('is_anonymous')
 
@@ -212,8 +224,21 @@ async def save_feedback(
             )
 
             message_repo = MessageRepo(session_with_commit)
-            await message_repo.create_message(message=new_message)
+            message_id = await message_repo.create_message_and_return_message_id(message=new_message)
+            if message_id:
+                print(message_id, type(message_id))
+            else:
+                print('Nothing')
 
+
+            group_message = MessageForTelegramGroup(
+                message_id=message_id,
+                content=content,
+                name=name if not is_anonymous else 'Anonymous',
+                category_title=category_title
+            )
+
+            await send_message_to_group(message.bot, group_message)
 
     await state.clear()
 
