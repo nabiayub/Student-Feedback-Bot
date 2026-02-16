@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     ADMIN_IDS: list[int]
     SUPERUSER_ID: int
 
+    GROUP_CHAT_ID: int
+
     DATABASE_URL: str
     FORMAT_LOG: str = "{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}"
     LOG_ROTATION: str = "10 MB"
