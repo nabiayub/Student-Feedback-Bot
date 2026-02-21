@@ -26,7 +26,7 @@ class Message(Base):
         nullable=True
     )
 
-    admin_group_message_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    admin_group_message_id: Mapped[int | None] = mapped_column(BigInteger, unique=True, nullable=True)
 
     user: Mapped["User"] = relationship(
         "User",
