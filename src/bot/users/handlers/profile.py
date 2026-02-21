@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.lexicon import MainMenuButtons, GoBackButtons
+from src.bot.lexicon import MainMenuButtons, GoBackButtons, ProfileButtons
 from src.bot.users.keyboards.profile import profile_kb, cancel_name_kb, HistoryPaginatorCBData, get_history_paginator_cb
 from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import UserNameState
@@ -35,7 +35,7 @@ async def profile_view(
     )
 
 
-@router.message(F.text == '🖋 Change Name')
+@router.message(F.text == ProfileButtons.CHANGE_NAME)
 async def start_changing_name(
         message: Message,
         state: FSMContext,
@@ -47,7 +47,7 @@ async def start_changing_name(
     await state.set_state(UserNameState.NAME)
 
 
-@router.message(StateFilter(UserNameState), F.text == '⏩ Skip')
+@router.message(StateFilter(UserNameState), F.text == GoBackButtons.SKIP)
 async def skip_name(
         message: Message,
         state: FSMContext,
@@ -141,7 +141,7 @@ async def save_name(
     await profile_view(message=message, session_without_commit=session_without_commit)
 
 
-@router.message(F.text == '📜 Show history')
+@router.message(F.text == ProfileButtons.SHOW_HISTORY)
 async def show_history_first(
         message: Message,
         session_without_commit: AsyncSession,

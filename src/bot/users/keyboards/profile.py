@@ -4,7 +4,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-from src.bot.lexicon import GoBackButtons
+from src.bot.lexicon import GoBackButtons, ProfileButtons
 
 
 class HistoryPaginatorCBData(CallbackData, prefix='history'):
@@ -18,7 +18,7 @@ def cancel_name_kb() -> ReplyKeyboardMarkup:
     :return: ReplyKeyboardMarkup instance
     """
     keyboard = ReplyKeyboardBuilder()
-    keyboard.button(text='⏩ Skip')
+    keyboard.button(text=GoBackButtons.SKIP)
 
     keyboard.adjust(1)
 
@@ -28,8 +28,8 @@ def profile_kb() -> ReplyKeyboardMarkup:
     """Keyboard for profile reply buttons: Change name and view history"""
     keyboard = ReplyKeyboardBuilder()
 
-    keyboard.button(text='🖋 Change Name')
-    keyboard.button(text='📜 Show history')
+    keyboard.button(text=ProfileButtons.CHANGE_NAME)
+    keyboard.button(text=ProfileButtons.SHOW_HISTORY)
     keyboard.button(text=GoBackButtons.BACK_TO_MENU)
 
     keyboard.adjust(2, 1)

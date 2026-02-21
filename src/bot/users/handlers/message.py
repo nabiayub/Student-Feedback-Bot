@@ -4,7 +4,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.testing import assert_warns_message
 
-from src.bot.lexicon import MainMenuButtons, GoBackButtons
+from src.bot.lexicon import MainMenuButtons, GoBackButtons, MessageButtons
 from src.bot.users.keyboards.message import ask_category_kb, go_back_kb
 from src.bot.users.keyboards.utils import asks_yes_or_no, main_menu_kb
 from src.bot.users.states import MessageState
@@ -48,9 +48,9 @@ async def ask_to_write_feedback(
     """
     category = message.text
     categories = {
-        'Feedback': 1,
-        'Complaint': 2,
-        'Suggestion': 3
+        MessageButtons.FEEDBACK: 1,
+        MessageButtons.COMPLAINT: 2,
+        MessageButtons.SUGGESTION: 3
     }
 
     if category not in categories.keys():

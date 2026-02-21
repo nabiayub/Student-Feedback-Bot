@@ -1,11 +1,11 @@
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from ...lexicon import MainMenuButtons, GoBackButtons
+from ...lexicon import MainMenuButtons, GoBackButtons, YesNoButtons
 
 
 def asks_yes_or_no(
-        yes_text: str = 'Yes',
-        no_text: str = 'No',
+        yes_text: str = YesNoButtons.YES,
+        no_text: str = YesNoButtons.NO,
         show_back: bool = False,
         show_main_menu: bool = False
 ) -> ReplyKeyboardMarkup:
