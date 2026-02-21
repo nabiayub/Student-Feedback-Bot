@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.bot.lexicon import MainMenuButtons, GoBackButtons
 from src.bot.users.keyboards.profile import profile_kb, cancel_name_kb, HistoryPaginatorCBData, get_history_paginator_cb
 from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import UserNameState
@@ -16,7 +17,7 @@ from src.services.repositories.users import UserRepository
 router = Router()
 
 
-@router.message(F.text == '👤 Profile')
+@router.message(F.text == MainMenuButtons.PROFILE)
 async def profile_view(
         message: Message,
         session_without_commit: AsyncSession,
@@ -87,7 +88,7 @@ async def confirm_name(
     await state.set_state(UserNameState.CONFIRM_NAME)
 
 
-@router.message(UserNameState.CONFIRM_NAME, F.text.in_({"✅ Confirm", "❌ Cancel", "⬅️ Go back"}))
+@router.message(UserNameState.CONFIRM_NAME, F.text.in_({"✅ Confirm", "❌ Cancel", GoBackButtons.GO_BACK}))
 async def save_name(
         message: Message,
         state: FSMContext,
@@ -98,7 +99,7 @@ async def save_name(
     Saves name and registered=True to db
     """
     response = message.text
-    if response == "⬅️ Go back":
+    if response == GoBackButtons.GO_BACK:
         text = "Enter your name again (optional):"
         await message.answer(
             text=text,

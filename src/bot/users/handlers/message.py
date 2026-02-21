@@ -4,6 +4,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.testing import assert_warns_message
 
+from src.bot.lexicon import MainMenuButtons, GoBackButtons
 from src.bot.users.keyboards.message import ask_category_kb, go_back_kb
 from src.bot.users.keyboards.utils import asks_yes_or_no, main_menu_kb
 from src.bot.users.states import MessageState
@@ -17,7 +18,7 @@ from src.services.repositories.users import UserRepository
 router = Router()
 
 
-@router.message(F.text == '✍️ Write feedback')
+@router.message(F.text == MainMenuButtons.WRITE_FEEDBACK)
 async def start_feedback(
         message: types.Message,
         state: FSMContext
@@ -81,7 +82,7 @@ async def ask_anonymity_handler(
     """
     content = message.text
 
-    if content == '⬅️ Go back':
+    if content == GoBackButtons.GO_BACK:
         text = '📂 Select a category below:'
         await message.answer(
             text=text,
@@ -109,7 +110,7 @@ async def ask_anonymity_handler(
     await state.set_state(MessageState.ANONYMOUS)
 
 
-@router.message(MessageState.ANONYMOUS, F.text.in_({"🔒 Anonymously", "📌 Publicly", "⬅️ Go back"}))
+@router.message(MessageState.ANONYMOUS, F.text.in_({"🔒 Anonymously", "📌 Publicly", GoBackButtons.GO_BACK}))
 async def ask_confirmation_of_feedback(
         message: Message,
         state: FSMContext
@@ -120,7 +121,7 @@ async def ask_confirmation_of_feedback(
     """
     is_anonymous = message.text
     match is_anonymous:
-        case '⬅️ Go back':
+        case GoBackButtons.GO_BACK:
             text = '✍️ Type your message:'
             await message.answer(
                 text=text,
@@ -158,7 +159,7 @@ async def send_message_to_group(
         text=text,
     )
 
-@router.message(MessageState.CONFIRM_MESSAGE, F.text.in_({"✅ Confirm", "❌ Cancel", "⬅️ Go back"}))
+@router.message(MessageState.CONFIRM_MESSAGE, F.text.in_({"✅ Confirm", "❌ Cancel", GoBackButtons.GO_BACK}))
 async def save_feedback(
         message: Message,
         state: FSMContext,
@@ -172,7 +173,7 @@ async def save_feedback(
     response = message.text
 
     match response:
-        case '⬅️ Go back':
+        case GoBackButtons.GO_BACK:
             text = ('<b>Choose how to send:</b>\n\n'
                     '🔒 <b>Anonymously:</b> Your identity stays hidden.\n'
                     '📎 <b>Publicly:</b> Your name will be shown to administrator')

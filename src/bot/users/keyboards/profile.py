@@ -4,6 +4,9 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
+from src.bot.lexicon import GoBackButtons
+
+
 class HistoryPaginatorCBData(CallbackData, prefix='history'):
     page: int
     action: str # "previous, next, ignore"
@@ -27,7 +30,7 @@ def profile_kb() -> ReplyKeyboardMarkup:
 
     keyboard.button(text='🖋 Change Name')
     keyboard.button(text='📜 Show history')
-    keyboard.button(text='⬅️ Back to Menu')
+    keyboard.button(text=GoBackButtons.BACK_TO_MENU)
 
     keyboard.adjust(2, 1)
 

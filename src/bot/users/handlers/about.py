@@ -1,11 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import Message
 
+from src.bot.lexicon import MainMenuButtons
 from src.schemas.messages import MessageRead
 
 router = Router()
 
-@router.message(F.text == 'ℹ️ About')
+@router.message(F.text == MainMenuButtons.ABOUT)
 async def about_handler(message: Message):
     about_text = (
         "<b>🎓 AUT Feedback Portal</b>\n\n"

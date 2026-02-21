@@ -3,6 +3,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.bot.lexicon import GoBackButtons
 from src.bot.users.services.onboarding import OnboardingService
 from src.bot.users.utils import go_to_main_menu
 
@@ -55,7 +56,7 @@ async def start_bot(message: types.Message,
 
 
 
-@router.message(F.text == '⬅️ Back to Menu')
+@router.message(F.text == GoBackButtons.BACK_TO_MENU)
 async def go_to_main_menu_handler(
         message: types.Message,
         state: FSMContext,

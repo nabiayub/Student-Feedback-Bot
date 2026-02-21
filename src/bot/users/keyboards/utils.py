@@ -1,5 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from ...lexicon import MainMenuButtons, GoBackButtons
 
 
 def asks_yes_or_no(
@@ -22,10 +23,10 @@ def asks_yes_or_no(
     keyboard.button(text=f'{no_text}')
 
     if show_back:
-        keyboard.button(text='⬅️ Go back')
+        keyboard.button(text=GoBackButtons.GO_BACK)
 
     if show_main_menu:
-        keyboard.button(text='⬅️ Back to Menu')
+        keyboard.button(text=GoBackButtons.BACK_TO_MENU)
 
     keyboard.adjust(2)
 
@@ -35,7 +36,7 @@ def asks_yes_or_no(
 def go_to_main_menu_kb() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
 
-    keyboard.button(text='⬅️ Back to Menu')
+    keyboard.button(text=GoBackButtons.BACK_TO_MENU)
 
     keyboard.adjust(1)
 
@@ -44,9 +45,9 @@ def go_to_main_menu_kb() -> ReplyKeyboardMarkup:
 
 def main_menu_kb() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
-    keyboard.button(text='✍️ Write feedback')
-    keyboard.button(text='👤 Profile')
-    keyboard.button(text='ℹ️ About')
+    keyboard.button(text=MainMenuButtons.WRITE_FEEDBACK)
+    keyboard.button(text=MainMenuButtons.PROFILE)
+    keyboard.button(text=MainMenuButtons.ABOUT)
 
     keyboard.adjust(1, 2)
 
