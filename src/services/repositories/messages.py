@@ -12,14 +12,14 @@ class MessageRepo:
     def __init__(self, session: AsyncSession):
         self.__session = session
 
-    async def create_message_and_return_message_id(self, message: MessageCreate) -> None:
+    async def create_message_and_return_message_id(self, message: MessageCreate) -> Message:
         """Creates new message in database"""
         db_message = Message(**message.model_dump())
         self.__session.add(db_message)
 
         try:
             await self.__session.flush()
-            return db_message.id
+            return db_message
 
         except IntegrityError:
             await self.__session.rollback()
@@ -51,3 +51,6 @@ class MessageRepo:
         messages = messages[:limit]
 
         return [MessageRead.model_validate(msg) for msg in messages], has_next
+
+
+

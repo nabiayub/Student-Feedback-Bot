@@ -10,6 +10,7 @@ from src.bot.users.keyboards.utils import asks_yes_or_no, main_menu_kb
 from src.bot.users.states import MessageState
 from src.bot.users.utils import go_to_main_menu
 from src.config.settings import settings
+from src.database import models
 from src.schemas.messages import MessageCreate, MessageForTelegramGroup
 from src.schemas.users import UserCreate
 from src.services.repositories.messages import MessageRepo
@@ -149,15 +150,18 @@ async def ask_confirmation_of_feedback(
     await state.set_state(MessageState.CONFIRM_MESSAGE)
 
 
-async def send_message_to_group(
+async def send_message_to_group_and_return_group_message_id(
         bot: Bot,
         group_message: MessageForTelegramGroup
-):
+) -> int:
     text = group_message.create_text_for_telegram_message()
-    await bot.send_message(
+    sent_message: Message = await bot.send_message(
         chat_id=settings.GROUP_CHAT_ID,
         text=text,
     )
+
+    return sent_message.message_id
+
 
 @router.message(MessageState.CONFIRM_MESSAGE, F.text.in_({"✅ Confirm", "❌ Cancel", GoBackButtons.GO_BACK}))
 async def save_feedback(
@@ -225,21 +229,18 @@ async def save_feedback(
             )
 
             message_repo = MessageRepo(session_with_commit)
-            message_id = await message_repo.create_message_and_return_message_id(message=new_message)
-            if message_id:
-                print(message_id, type(message_id))
-            else:
-                print('Nothing')
+            created_message: models.Message = await message_repo.create_message_and_return_message_id(message=new_message)
 
 
             group_message = MessageForTelegramGroup(
-                message_id=message_id,
+                message_id=created_message.id,
                 content=content,
                 name=name if not is_anonymous else 'Anonymous',
                 category_title=category_title
             )
+            admin_group_message_id = await send_message_to_group_and_return_group_message_id(message.bot, group_message)
 
-            await send_message_to_group(message.bot, group_message)
+            created_message.admin_group_message_id = admin_group_message_id
 
     await state.clear()
 
