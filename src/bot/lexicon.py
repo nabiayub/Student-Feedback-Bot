@@ -4,6 +4,7 @@ class MainMenuButtons(str, Enum):
     WRITE_FEEDBACK = '✍️ Write feedback'
     PROFILE = '👤 Profile'
     ABOUT = 'ℹ️ About'
+    ADMIN_PANEL = '🛠️ Admin Panel'
 
 
 class GoBackButtons(str, Enum):

@@ -43,13 +43,18 @@ def go_to_main_menu_kb() -> ReplyKeyboardMarkup:
     return keyboard.as_markup(resize_keyboard=True)
 
 
-def main_menu_kb() -> ReplyKeyboardMarkup:
+def main_menu_kb(show_admin_panel: bool) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
     keyboard.button(text=MainMenuButtons.WRITE_FEEDBACK)
     keyboard.button(text=MainMenuButtons.PROFILE)
     keyboard.button(text=MainMenuButtons.ABOUT)
 
-    keyboard.adjust(1, 2)
+    if show_admin_panel:
+        keyboard.button(text=MainMenuButtons.ADMIN_PANEL)
+
+
+
+    keyboard.adjust(1, 2, 1)
 
     return keyboard.as_markup(
         resize_keyboard=True,

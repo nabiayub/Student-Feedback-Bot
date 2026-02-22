@@ -10,6 +10,8 @@ from src.database.models import User
 from src.schemas.users import UserCreate
 from src.services.repositories.users import UserRepository
 
+from src.bot.utils.admin_manager import admin_manager
+
 
 class OnboardingService:
     """
@@ -69,8 +71,10 @@ class OnboardingService:
         await state.set_state(UserNameState.NAME)
 
     async def main_menu(self, chat_id: int, bot: Bot) -> None:
+        is_admin = await admin_manager.is_admin(chat_id)
+
         await bot.send_message(
             chat_id=chat_id,
             text='You are on the main page. Please choose a section below 👇',
-            reply_markup=main_menu_kb()
+            reply_markup=main_menu_kb(is_admin)
         )
