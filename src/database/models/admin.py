@@ -12,3 +12,5 @@ class Admin(Base):
 
     def __repr__(self) -> str:
         return f"<Admin(telegram_id={self.telegram_id}, added_at={self.created_at})>"
+
+
