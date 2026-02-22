@@ -32,13 +32,14 @@ class MessageForTelegramGroup(BaseModel):
 
     content: str
     category_title: str
-    name: str
+    name: str | None
 
     def create_text_for_telegram_message(self):
+        name = self.name if self.name else 'No name'
         text = (
             # f'№{self.id} - {self.category_title} - {sender}\n'
             f'{self.content}\n\n'
-            f'№ {self.message_id} - {self.category_title} - {self.name}\n'
+            f'№ {self.message_id} - {self.category_title} - {name}\n'
 
         )
 

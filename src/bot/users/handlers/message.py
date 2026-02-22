@@ -2,11 +2,10 @@ from aiogram import Router, types, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.testing import assert_warns_message
 
 from src.bot.lexicon import MainMenuButtons, GoBackButtons, MessageButtons
 from src.bot.users.keyboards.message import ask_category_kb, go_back_kb
-from src.bot.users.keyboards.utils import asks_yes_or_no, main_menu_kb
+from src.bot.users.keyboards.utils import asks_yes_or_no
 from src.bot.users.states import MessageState
 from src.bot.users.utils import go_to_main_menu
 from src.config.settings import settings
