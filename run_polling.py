@@ -10,13 +10,13 @@ from src.bot.utils.admin_manager import admin_manager
 
 async def on_startup(bot):
     """Tasks to run before polling starts."""
-    # 1. Initialize the Admin Cache from DB
-    async with async_session_maker() as session:
-        await admin_manager.update_admins_list(session)
+    # Uncomment at production
+    # async with async_session_maker() as session:
+    #     await admin_manager.update_admins_list(session)
 
-    all_admins: set[int] = await admin_manager.get_all_admins()
+    all_adminsdmins: set[int] = await admin_manager.get_all_admins()
     # 2. Notify Super Adminsw
-    for admin_id in all_admins:
+    for admin_id in settings.ADMIN_IDS:
         try:
             await bot.send_message(chat_id=admin_id, text='🚀 Bot is activated')
         except Exception as e:
