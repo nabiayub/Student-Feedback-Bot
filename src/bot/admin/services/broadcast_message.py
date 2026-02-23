@@ -4,7 +4,7 @@ from aiogram import Bot
 from aiogram.exceptions import TelegramRetryAfter, TelegramNotFound
 
 
-async def broadcast_to_all(bot: Bot, user_ids: list[int], text: str) -> int:
+async def broadcast_to_all_users(bot: Bot, user_ids: list[int], text: str) -> int:
     """
     A method for broadcasting message to all users
     :param bot: bot instance

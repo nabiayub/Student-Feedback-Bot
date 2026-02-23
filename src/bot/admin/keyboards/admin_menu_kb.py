@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from src.bot.lexicon import AdminMenuButtons, AdminAnnouncementButtons
+from src.bot.lexicon import AdminMenuButtons, AdminAnnouncementButtons, ReturnToAdminPanel
 
 
 def admin_menu_kb() -> ReplyKeyboardMarkup:
@@ -14,13 +14,11 @@ def admin_menu_kb() -> ReplyKeyboardMarkup:
 
     return keyboard.as_markup(resize_keyboard=True)
 
-def cancel_kb() -> ReplyKeyboardMarkup:
-    """Cancel announce keyboard"""
+
+def go_to_admin_menu_kb() -> ReplyKeyboardMarkup:
+    """Go to admin menu keyboard"""
     keyboard = ReplyKeyboardBuilder()
 
-    keyboard.button(text=AdminAnnouncementButtons.GO_BACK)
-
+    keyboard.button(text=ReturnToAdminPanel.RETURN_TO_ADMIN_PANEL)
     keyboard.adjust(1)
-
     return keyboard.as_markup(resize_keyboard=True)
-

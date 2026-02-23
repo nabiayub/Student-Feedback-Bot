@@ -26,12 +26,9 @@ class AdminManager:
         """Update admins list"""
         admin_repo = AdminRepo(session_without_commit)
 
-        new_admins = set(settings.ADMIN_IDS)
-
         db_admins = await admin_repo.get_all_admin_id()
-        new_admins.update(db_admins)
 
-        self._admins = new_admins
+        self._admins = db_admins
         self._is_initialized = True
 
 admin_manager = AdminManager()

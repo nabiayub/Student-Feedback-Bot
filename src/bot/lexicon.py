@@ -35,3 +35,6 @@ class AdminAnnouncementButtons(str, Enum):
     CANCEL_ANNOUNCEMENT = '❌ Cancel'
     GO_BACK = '⬅️ Go back'
 
+class ReturnToAdminPanel(str, Enum):
+    RETURN_TO_ADMIN_PANEL = '⬅️ Admin Panel'
+

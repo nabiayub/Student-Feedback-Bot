@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.bot.users.keyboards.profile import cancel_name_kb
 from src.bot.users.keyboards.utils import go_to_main_menu_kb, main_menu_kb
 from src.bot.users.states import UserNameState
+from src.config.settings import settings
 from src.database.models import User
 from src.schemas.users import UserCreate
 from src.services.repositories.users import UserRepository
@@ -71,7 +72,8 @@ class OnboardingService:
         await state.set_state(UserNameState.NAME)
 
     async def main_menu(self, chat_id: int, bot: Bot) -> None:
-        is_admin = await admin_manager.is_admin(chat_id)
+        # is_admin = await admin_manager.is_admin(chat_id)
+        is_admin = True if chat_id in settings.ADMIN_IDS else False
 
         await bot.send_message(
             chat_id=chat_id,
