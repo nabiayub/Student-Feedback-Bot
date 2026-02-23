@@ -10,7 +10,7 @@ class User(Base):
     """Users table"""
     __tablename__ = 'users'
 
-    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True)
 
     username: Mapped[str | None]
     name: Mapped[Optional[str | None]] = mapped_column(String, nullable=True)
