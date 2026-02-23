@@ -11,7 +11,7 @@ class GoBackButtons(str, Enum):
     BACK_TO_MENU = '⬅️ Back to Menu'
     GO_BACK = '⬅️ Go back'
     SKIP = '⏩ Skip'
-
+    RETURN_TO_ADMIN_PANEL = '⬅️ Admin Panel'
 
 class MessageButtons(str, Enum):
     FEEDBACK = 'Feedback'
@@ -27,7 +27,7 @@ class YesNoButtons(str, Enum):
     NO = 'No'
 
 class AdminMenuButtons(str, Enum):
-    POST_ANNOUNCEMENT = '🔔 Post Announcement'
+    POST_ANNOUNCEMENT = '🔔 Announcement'
     ANALYTICS = '📊 Analytics'
 
 class AdminAnnouncementButtons(str, Enum):
@@ -35,6 +35,4 @@ class AdminAnnouncementButtons(str, Enum):
     CANCEL_ANNOUNCEMENT = '❌ Cancel'
     GO_BACK = '⬅️ Go back'
 
-class ReturnToAdminPanel(str, Enum):
-    RETURN_TO_ADMIN_PANEL = '⬅️ Admin Panel'
 

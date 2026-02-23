@@ -8,7 +8,7 @@ from sqlalchemy.testing.pickleable import AddressWMixin
 from src.bot.admin.handlers.start import admin_panel
 from src.bot.admin.keyboards.admin_menu_kb import go_to_admin_menu_kb
 from src.bot.admin.services.broadcast_message import broadcast_to_all_users
-from src.bot.lexicon import AdminMenuButtons, AdminAnnouncementButtons, ReturnToAdminPanel
+from src.bot.lexicon import AdminMenuButtons, AdminAnnouncementButtons
 
 from src.bot.admin.states import AnnouncementState
 from src.bot.users.keyboards.utils import asks_yes_or_no
