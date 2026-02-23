@@ -25,3 +25,13 @@ class ProfileButtons(str, Enum):
 class YesNoButtons(str, Enum):
     YES = 'Yes'
     NO = 'No'
+
+class AdminMenuButtons(str, Enum):
+    POST_ANNOUNCEMENT = '🔔 Post Announcement'
+    ANALYTICS = '📊 Analytics'
+
+class AdminAnnouncementButtons(str, Enum):
+    CONFIRM_ANNOUNCEMENT = '✅ Send'
+    CANCEL_ANNOUNCEMENT = '❌ Cancel'
+    GO_BACK = '⬅️ Go back'
+
