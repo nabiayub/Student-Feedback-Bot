@@ -7,12 +7,19 @@ from src.bot.lexicon import MainMenuButtons, GoBackButtons
 
 router = Router()
 
+
 @router.message(F.text == MainMenuButtons.ADMIN_PANEL)
-async def admin_panel(message: Message):
+async def admin_panel(
+        message: Message,
+        state: FSMContext,
+):
+    await state.clear()
+
     await message.answer(
         text='Hello' + message.from_user.username,
         reply_markup=admin_menu_kb()
     )
+
 
 @router.message(F.text == GoBackButtons.RETURN_TO_ADMIN_PANEL)
 async def go_back_to_main_menu(
@@ -21,5 +28,7 @@ async def go_back_to_main_menu(
 ):
     await state.clear()
 
-    await admin_panel(message)
-
+    await admin_panel(
+        message=message,
+        state=state,
+    )

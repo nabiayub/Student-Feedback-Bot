@@ -14,12 +14,18 @@ class AnnouncementRepo():
         self.__session = session
 
     async def create_announcement(self, announcement: AnnouncementCreate):
+        print(announcement)
         db_announcement = Announcement(**announcement.model_dump())
         self.__session.add(db_announcement)
 
-
         try:
             await self.__session.flush()
-
-        except IntegrityError:
+        #
+        # except IntegrityError:
+        #     await self.__session.rollback()
+        except Exception as e:
             await self.__session.rollback()
+            print(f'ur mistake {e}')
+            raise e
+
+        print('successfully created announcement')
