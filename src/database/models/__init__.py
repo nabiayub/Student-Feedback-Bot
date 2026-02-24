@@ -3,6 +3,7 @@ from .base import Base
 from .user import User
 from .message import Message
 from  .admin import Admin
+from .announcement import Announcement
 
 __all__ = (
     'Category',
@@ -10,4 +11,5 @@ __all__ = (
     'User',
     'Message',
     'Admin',
+    'Announcement',
 )

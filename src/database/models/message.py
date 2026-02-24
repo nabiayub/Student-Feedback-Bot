@@ -1,6 +1,3 @@
-from typing import List
-
-from aiohttp.abc import StreamResponse
 from sqlalchemy import BigInteger, Boolean, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

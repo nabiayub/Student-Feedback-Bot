@@ -94,6 +94,11 @@ async def send_announcement(
                 text=text_for_users,
             )
 
+            await message.answer(
+                "<b>🚀 Success!</b>\n"
+                f"The announcement has been pushed to <b>{users_sent}</b> users.",
+            )
+
     await state.clear()
     await admin_panel(message)
 

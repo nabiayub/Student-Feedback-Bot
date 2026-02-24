@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from sqlalchemy import BigInteger, Boolean, String, ForeignKey
+from sqlalchemy import BigInteger, Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database.models.base import Base  # your created_at/updated_at mixin
@@ -21,6 +21,11 @@ class User(Base):
 
     messages: Mapped[List["Message"] | None] = relationship(
         "Message",
+        back_populates="user",
+        passive_deletes=True,
+    )
+
+    announcements: Mapped[List["Announcement"]] = relationship(
         back_populates="user",
         passive_deletes=True,
     )
