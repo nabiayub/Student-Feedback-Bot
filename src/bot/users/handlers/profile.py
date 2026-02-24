@@ -45,7 +45,7 @@ async def start_changing_name(
         message: Message,
         state: FSMContext,
 ) -> None:
-    text = ("<b>Please enter your name below</b>\n"
+    text = ("<b>Please enter your name below.</b>\n"
     "<i>(Or tap skip below): </i> ")
 
     await message.answer(
@@ -67,6 +67,9 @@ async def skip_name(
     """
     await state.clear()
 
+    user_repo = UserRepository(session_with_commit)
+    await user_repo.set_name_and_registered_for_user(message.from_user.id)
+
     await go_to_main_menu(
         user_tg=message.from_user,
         chat_id=message.chat.id,
@@ -74,10 +77,6 @@ async def skip_name(
         state=state,
         session_with_commit=session_with_commit
     )
-
-    user_repo = UserRepository(session_with_commit)
-    await user_repo.set_name_and_registered_for_user(message.from_user.id)
-
 
 
 @router.message(UserNameState.NAME)

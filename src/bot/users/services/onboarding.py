@@ -64,9 +64,14 @@ class OnboardingService:
         return user
 
     async def set_name(self, chat_id: int, state: FSMContext, bot: Bot) -> None:
+        text = (
+        "<b>📝 Registration</b>\n\n"
+        "Please enter your name to continue.\n"
+        "<i>(Or tap skip below to remain anonymous):</i>"
+    )
         await bot.send_message(
             chat_id=chat_id,
-            text="Enter your name (optional):",
+            text=text,
             reply_markup=cancel_name_kb()
         )
         await state.set_state(UserNameState.NAME)
