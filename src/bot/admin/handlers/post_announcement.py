@@ -1,9 +1,7 @@
 from aiogram import Router, F
-from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.testing.pickleable import AddressWMixin
 
 from src.bot.admin.handlers.start import admin_panel
 from src.bot.admin.keyboards.admin_menu_kb import go_to_admin_menu_kb
@@ -18,6 +16,7 @@ from src.services.repositories.announcement import AnnouncementRepo
 from src.services.repositories.users import UserRepository
 
 router = Router()
+
 
 @router.message(F.text == AdminMenuButtons.POST_ANNOUNCEMENT)
 async def ask_announcement(
@@ -109,7 +108,6 @@ async def send_announcement(
                     telegram_id=message.from_user.id)
                 user = await user_repo.get_or_create_user(user_create)
 
-
             announcement_message = AnnouncementCreate(
                 content=text_for_users,
                 sent_users=users_sent,
@@ -125,6 +123,3 @@ async def send_announcement(
         message=message,
         state=state
     )
-
-
-
