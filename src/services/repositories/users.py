@@ -1,7 +1,7 @@
 from sqlite3 import IntegrityError
 from xml.dom.domreg import registered
 
-from sqlalchemy import select, ScalarResult
+from sqlalchemy import select, ScalarResult, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import User, Message
@@ -92,6 +92,19 @@ class UserRepository:
         user: User | None = await self.get_user_by_telegram_id_or_none(telegram_id)
 
         return user.name if user else None
+
+    async def get_user_message_count(self, telegram_id: int) -> int:
+        statement = (
+            select(func.count(Message.id))
+            .join(User)  # Join to filter by telegram_id instead of internal DB id
+            .where(User.telegram_id == telegram_id)
+        )
+
+        count = await self.__session.scalar(statement)
+
+        return count or 0
+
+
 
 
 

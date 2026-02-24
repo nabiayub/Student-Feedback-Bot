@@ -22,10 +22,16 @@ async def profile_view(
 ) -> None:
     user_repo = UserRepository(session_without_commit)
     user_name = await user_repo.get_name_by_telegram_id(message.from_user.id)
+    messages_count = await user_repo.get_user_message_count(message.from_user.id)
 
-    text = (f"<b>👤 Profile</b>\n"
-            f"<b>Name:</b> {user_name if user_name else 'Missing'}\n\n"
-            "Choose an option 👇")
+    text = (
+        f"<b>👤 USER PROFILE</b>\n\n"
+        
+        f"<b>Name:</b> {user_name or 'Not set'}\n"
+        f"<b>Messages:</b> {messages_count}\n\n"
+        
+        f"<i>Select an option below:</i>"
+    )
 
     await message.answer(
         text=text,
