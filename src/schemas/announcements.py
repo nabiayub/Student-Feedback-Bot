@@ -6,9 +6,6 @@ from src.schemas.categories import CategoryBase
 from src.schemas.users import UserBase
 
 class AnnouncementCreate(BaseModel):
-    telegram_id: int
     sent_users: int
-
     content: str
-
     user_id: int
