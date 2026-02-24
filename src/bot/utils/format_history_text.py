@@ -16,7 +16,7 @@ def format_history_text(messages: list[MessageRead], page: int, limit: int) -> s
         date_str = msg.created_at.strftime('%d-%m-%Y')
         history_text += (
             '\n'
-            f'<b>💬 Feedback #{feedback_count}</b>\n'
+            f'<b>💬 Message #{feedback_count}</b>\n'
             f"{date_str} | {msg.category.title}\n"
             f"<blockquote expandable><i>{msg.content}</i></blockquote>\n"
         )
