@@ -8,6 +8,7 @@ from src.bot.lexicon import MainMenuButtons, GoBackButtons, ProfileButtons
 from src.bot.users.keyboards.profile import profile_kb, cancel_name_kb, HistoryPaginatorCBData, get_history_paginator_cb
 from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import UserNameState
+from src.bot.users.utils import go_to_main_menu
 from src.bot.utils.format_history_text import format_history_text
 from src.services.repositories.messages import MessageRepo
 from src.services.repositories.users import UserRepository
@@ -25,7 +26,7 @@ async def profile_view(
     messages_count = await user_repo.get_user_message_count(message.from_user.id)
 
     text = (
-        f"<b>👤 USER PROFILE</b>\n\n"
+        f"<b>👤 User Profile</b>\n\n"
         
         f"<b>Name:</b> {user_name or 'Not set'}\n"
         f"<b>Messages:</b> {messages_count}\n\n"
@@ -44,8 +45,11 @@ async def start_changing_name(
         message: Message,
         state: FSMContext,
 ) -> None:
+    text = ("<b>Please enter your name below</b>\n"
+    "<i>(Or tap skip below): </i> ")
+
     await message.answer(
-        text='<b>Enter your name:</b>\n<i>(Or tap skip below)</i> ⏩',
+        text=text,
         reply_markup=cancel_name_kb()
     )
     await state.set_state(UserNameState.NAME)
@@ -63,7 +67,13 @@ async def skip_name(
     """
     await state.clear()
 
-    await profile_view(message=message, session_without_commit=session_without_commit)
+    await go_to_main_menu(
+        user_tg=message.from_user,
+        chat_id=message.chat.id,
+        bot=message.bot,
+        state=state,
+        session_with_commit=session_with_commit
+    )
 
     user_repo = UserRepository(session_with_commit)
     await user_repo.set_name_and_registered_for_user(message.from_user.id)
@@ -142,7 +152,13 @@ async def save_name(
 
     await state.clear()
 
-    await profile_view(message=message, session_without_commit=session_without_commit)
+    await go_to_main_menu(
+        user_tg=message.from_user,
+        chat_id=message.chat.id,
+        bot=message.bot,
+        state=state,
+        session_with_commit=session_with_commit
+    )
 
 
 @router.message(F.text == ProfileButtons.SHOW_HISTORY)

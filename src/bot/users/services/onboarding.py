@@ -75,8 +75,13 @@ class OnboardingService:
         # is_admin = await admin_manager.is_admin(chat_id)
         is_admin = True if chat_id in settings.ADMIN_IDS else False
 
+        text = (
+            f"<b>🏠 Main Menu</b>\n\n"
+            f"<i>Please select a section below 👇 </i>"
+        )
+
         await bot.send_message(
             chat_id=chat_id,
-            text='You are on the main page. Please choose a section below 👇',
+            text=text,
             reply_markup=main_menu_kb(is_admin)
         )

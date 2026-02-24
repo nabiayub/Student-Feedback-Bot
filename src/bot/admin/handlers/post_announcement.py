@@ -25,7 +25,7 @@ async def ask_announcement(
 ) -> None:
     """Handler that asks admin to write announcement"""
     text = ("📝 <b>Announcement Draft</b>\n\n"
-            "Please type the message you want to send to <b>all users</b>.\n\n")
+            "Please type the message you want to send to <b>all users</b>.")
 
     await message.answer(
         text=text,

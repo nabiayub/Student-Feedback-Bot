@@ -15,8 +15,13 @@ async def admin_panel(
 ):
     await state.clear()
 
+    text = (
+        f"<b>🏠 Admin Panel</b>\n\n"
+        f"<i>Please select a section below 👇 </i>"
+    )
+
     await message.answer(
-        text='Hello' + message.from_user.username,
+        text=text,
         reply_markup=admin_menu_kb()
     )
 
