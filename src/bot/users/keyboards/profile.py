@@ -44,10 +44,10 @@ def get_history_paginator_cb(page: int, has_next: bool) -> InlineKeyboardMarkup:
             text='⬅️',
             callback_data=HistoryPaginatorCBData(page=page - 1, action='previous')
         )
-    keyboard.button(
-        text=f'{page}',
-        callback_data=HistoryPaginatorCBData(page=page - 1, action='ignore')
-    )
+        keyboard.button(
+            text=f'{page}',
+            callback_data=HistoryPaginatorCBData(page=page - 1, action='ignore')
+        )
 
     if has_next:
         keyboard.button(

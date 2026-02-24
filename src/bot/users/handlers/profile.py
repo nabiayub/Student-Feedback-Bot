@@ -8,9 +8,7 @@ from src.bot.lexicon import MainMenuButtons, GoBackButtons, ProfileButtons
 from src.bot.users.keyboards.profile import profile_kb, cancel_name_kb, HistoryPaginatorCBData, get_history_paginator_cb
 from src.bot.users.keyboards.utils import asks_yes_or_no, go_to_main_menu_kb
 from src.bot.users.states import UserNameState
-from src.bot.users.utils import go_to_main_menu
 from src.bot.utils.format_history_text import format_history_text
-from src.schemas.messages import MessageRead
 from src.services.repositories.messages import MessageRepo
 from src.services.repositories.users import UserRepository
 
