@@ -1,11 +1,9 @@
 from wsgiref.simple_server import make_server
 
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, List
 from datetime import datetime
 
 from src.schemas.categories import CategoryBase
-from src.schemas.users import UserBase
 
 
 class MessageBase(BaseModel):
