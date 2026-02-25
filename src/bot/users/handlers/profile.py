@@ -180,6 +180,12 @@ async def show_history_first(
         limit=5
     )
 
+    if not messages:
+        await message.answer(
+            text=text,
+        )
+        return
+
     await message.answer(
         text=text,
         reply_markup=get_history_paginator_cb(

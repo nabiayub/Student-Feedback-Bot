@@ -9,7 +9,7 @@ from src.bot.lexicon import GoBackButtons, ProfileButtons
 
 class HistoryPaginatorCBData(CallbackData, prefix='history'):
     page: int
-    action: str # "previous, next, ignore"
+    action: str  # "previous, next, ignore"
 
 
 def cancel_name_kb() -> ReplyKeyboardMarkup:
@@ -24,6 +24,7 @@ def cancel_name_kb() -> ReplyKeyboardMarkup:
 
     return keyboard.as_markup(resize_keyboard=True)
 
+
 def profile_kb() -> ReplyKeyboardMarkup:
     """Keyboard for profile reply buttons: Change name and view history"""
     keyboard = ReplyKeyboardBuilder()
@@ -36,6 +37,7 @@ def profile_kb() -> ReplyKeyboardMarkup:
 
     return keyboard.as_markup(resize_keyboard=True)
 
+
 def get_history_paginator_cb(page: int, has_next: bool) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
@@ -44,10 +46,12 @@ def get_history_paginator_cb(page: int, has_next: bool) -> InlineKeyboardMarkup:
             text='⬅️',
             callback_data=HistoryPaginatorCBData(page=page - 1, action='previous')
         )
-        keyboard.button(
-            text=f'{page}',
-            callback_data=HistoryPaginatorCBData(page=page - 1, action='ignore')
-        )
+
+
+    keyboard.button(
+        text=f'{page}',
+        callback_data=HistoryPaginatorCBData(page=page - 1, action='ignore')
+    )
 
     if has_next:
         keyboard.button(
