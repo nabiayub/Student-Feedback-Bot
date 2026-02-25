@@ -43,8 +43,9 @@ async def confirm_sending_announcement(
     """Handler that asks admin to confirm sending announcement"""
     await state.update_data({'announcement_text': message.text})
 
-    text = (f'📤 Confirm: would you like to send this announcement to all <b>users</b>?\n\n'
-            f'<blockquote>{message.text}</blockquote>')
+    text = (f'📤 Confirm: would you like to send this announcement to all <b>users</b>?\n'
+            f"━━━━━━━━━━━━━━━\n"
+            f'{message.text}')
 
     await message.answer(
         text=text,
@@ -80,7 +81,7 @@ async def send_announcement(
             await state.set_state(AnnouncementState.ANNOUNCEMENT_TEXT)
 
         case AdminAnnouncementButtons.CANCEL_ANNOUNCEMENT:
-            text = '🗑️ <b>Cancelled.</b> Your feedback hasn\'t been sent.'
+            text = '🗑️ <b>Cancelled.</b> Your announcement hasn\'t been sent.'
             await message.answer(
                 text=text,
             )
