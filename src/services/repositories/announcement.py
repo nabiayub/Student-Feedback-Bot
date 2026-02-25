@@ -11,7 +11,6 @@ class AnnouncementRepo:
         self.__session = session
 
     async def create_announcement(self, announcement: AnnouncementCreate):
-        print(announcement)
         db_announcement = Announcement(**announcement.model_dump())
         self.__session.add(db_announcement)
 

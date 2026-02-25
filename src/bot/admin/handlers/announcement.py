@@ -43,7 +43,8 @@ async def confirm_sending_announcement(
     """Handler that asks admin to confirm sending announcement"""
     await state.update_data({'announcement_text': message.text})
 
-    text = '📤 Confirm: would you like to send this announcement to all <b>users</b>?'
+    text = (f'📤 Confirm: would you like to send this announcement to all <b>users</b>?\n\n'
+            f'<blockquote>{message.text}</blockquote>')
 
     await message.answer(
         text=text,
@@ -116,7 +117,6 @@ async def send_announcement(
 
             announcement_repo = AnnouncementRepo(session_with_commit)
             await announcement_repo.create_announcement(announcement_message)
-            print('Saving finished')
 
     await state.clear()
     await admin_panel(
