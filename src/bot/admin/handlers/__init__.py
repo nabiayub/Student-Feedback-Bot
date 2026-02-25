@@ -2,7 +2,7 @@ from aiogram import Dispatcher, Router
 
 from src.config.settings import settings
 from src.bot.admin.handlers.start import router as start_router
-from src.bot.admin.handlers.post_announcement import router as post_announcement_router
+from src.bot.admin.handlers.announcement import router as post_announcement_router
 
 from ...filters.admin import IsAdminFilter
 
