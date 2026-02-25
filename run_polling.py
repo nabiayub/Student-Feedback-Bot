@@ -38,7 +38,6 @@ async def main():
     try:
         await dp.start_polling(bot)
     except Exception as e:
-        print(e)
         await bot.session.close()
 
 

@@ -136,7 +136,11 @@ async def ask_confirmation_of_feedback(
 
     await state.update_data({'is_anonymous': is_anonymous})
 
-    text = '📤 Confirm: would you like to send this message?'
+    message_content = (await state.get_data()).get('content')
+
+    text = (f'📤 Confirm: would you like to send this message?\n\n'
+            f'<blockquote><i>{message_content}</i></blockquote>')
+
     await message.answer(
         text=text,
         reply_markup=asks_yes_or_no(
