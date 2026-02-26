@@ -19,7 +19,7 @@ router = Router()
 
 
 @router.message(F.text == MainMenuButtons.WRITE_FEEDBACK)
-async def start_feedback(
+async def start_feedback_and_ask_category(
         message: types.Message,
         state: FSMContext
 ) -> None:
@@ -39,12 +39,13 @@ async def start_feedback(
 
 
 @router.message(MessageState.CATEGORY_ID)
-async def ask_to_write_feedback(
+async def ask_anonymity(
         message: types.Message,
         state: FSMContext
 ) -> None:
     """
-    Receives category and ask user to write message content
+    Asks user whether the feedback is anonymous or not.
+    Saves message content to state
     """
     category = message.text
     categories = {
@@ -62,37 +63,8 @@ async def ask_to_write_feedback(
         return
 
     await state.update_data(category_id=categories[category], category_title=category)
+    ##############################
 
-    text = '✍️ Type your message:'
-    await message.answer(
-        text=text,
-        reply_markup=go_back_kb()
-    )
-    await state.set_state(MessageState.CONTENT)
-
-
-@router.message(MessageState.CONTENT)
-async def ask_anonymity_handler(
-        message: types.Message,
-        state: FSMContext
-) -> None:
-    """
-    Asks user whether the feedback is anonymous or not.
-    Saves message content to state
-    """
-    content = message.text
-
-    if content == GoBackButtons.GO_BACK:
-        text = '📂 Select a category below:'
-        await message.answer(
-            text=text,
-            reply_markup=ask_category_kb()
-        )
-
-        await state.set_state(MessageState.CATEGORY_ID)
-        return
-
-    await state.update_data({'content': content})
 
     # text = "🔒 Do you want to send this <i>anonymously</i>. (Your name won't be shown to the administrator)."
     text = ('<b>Choose how to send:</b>\n\n'
@@ -111,6 +83,39 @@ async def ask_anonymity_handler(
 
 
 @router.message(MessageState.ANONYMOUS, F.text.in_({"🔒 Anonymously", "📌 Publicly", GoBackButtons.GO_BACK}))
+async def ask_content(
+        message: types.Message,
+        state: FSMContext
+) -> None:
+    """
+    Receives ANONIMITY and ask user to write message content
+    """
+    is_anonymous = message.text
+    match is_anonymous:
+        case GoBackButtons.GO_BACK:
+            text = '📂 Select a category below:'
+            await message.answer(
+                text=text,
+                reply_markup=ask_category_kb()
+            )
+            await state.set_state(MessageState.CATEGORY_ID)
+            return
+        case '🔒 Anonymously':
+            is_anonymous = True
+        case '📌 Publicly':
+            is_anonymous = False
+
+    await state.update_data({'is_anonymous': is_anonymous})
+
+    text = '✍️ Type your message:'
+    await message.answer(
+        text=text,
+        reply_markup=go_back_kb()
+    )
+    await state.set_state(MessageState.CONTENT)
+
+
+@router.message(MessageState.CONTENT)
 async def ask_confirmation_of_feedback(
         message: Message,
         state: FSMContext
@@ -119,22 +124,27 @@ async def ask_confirmation_of_feedback(
     Asks user to confirm the feedback.
     Saves message anonymity to state
     """
-    is_anonymous = message.text
-    match is_anonymous:
-        case GoBackButtons.GO_BACK:
-            text = '✍️ Type your message:'
-            await message.answer(
-                text=text,
+    content = message.text
+
+    if content == GoBackButtons.GO_BACK:
+        text = ('<b>Choose how to send:</b>\n\n'
+                '🔒 <b>Anonymously:</b> Your identity stays hidden.\n'
+                '📎 <b>Publicly:</b> Your name will be shown to administrator')
+        await message.answer(
+            text=text,
+            reply_markup=asks_yes_or_no(
+                yes_text='🔒 Anonymously',
+                no_text='📌 Publicly',
+                show_back=True
             )
+        )
 
-            await state.set_state(MessageState.CONTENT)
-            return
-        case '🔒 Anonymously':
-            is_anonymous = True
-        case '📌 Publicly':
-            is_anonymous = False
+        await state.set_state(MessageState.ANONYMOUS)
+        return
 
-    await state.update_data({'is_anonymous': is_anonymous})
+    await state.update_data({'content': content})
+    ##############
+
 
     message_content = (await state.get_data()).get('content')
     category = (await state.get_data()).get('category_title')
@@ -186,19 +196,13 @@ async def save_feedback(
 
     match response:
         case GoBackButtons.GO_BACK:
-            text = ('<b>Choose how to send:</b>\n\n'
-                    '🔒 <b>Anonymously:</b> Your identity stays hidden.\n'
-                    '📎 <b>Publicly:</b> Your name will be shown to administrator')
+            text = '✍️ Type your message:'
             await message.answer(
                 text=text,
-                reply_markup=asks_yes_or_no(
-                    yes_text='🔒 Anonymously',
-                    no_text='📌 Publicly',
-                    show_back=True
-                )
+                reply_markup=go_back_kb()
             )
 
-            await state.set_state(MessageState.ANONYMOUS)
+            await state.set_state(MessageState.CONTENT)
             return
 
         case '❌ Cancel':
