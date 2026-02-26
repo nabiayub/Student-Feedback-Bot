@@ -20,8 +20,7 @@ class BaseDatabaseMiddleware(BaseMiddleware):
             except Exception as e:
                 await session.rollback()
                 raise e
-            finally:
-                await session.close()
+
 
     def set_session(self, data: Dict[str, Any], session) -> None:
         """

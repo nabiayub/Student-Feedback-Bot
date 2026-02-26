@@ -22,6 +22,8 @@ class Settings(BaseSettings):
         env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
     )
 
+    IS_PRODUCTION: bool
+
     def configure_logger(self):
         """
         Configure the Loguru logger for the bot.
