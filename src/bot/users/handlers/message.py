@@ -39,7 +39,7 @@ async def start_feedback_and_ask_category(
 
 
 @router.message(MessageState.CATEGORY_ID)
-async def ask_anonymity(
+async def ask_content(
         message: types.Message,
         state: FSMContext
 ) -> None:
@@ -67,45 +67,6 @@ async def ask_anonymity(
 
 
     # text = "🔒 Do you want to send this <i>anonymously</i>. (Your name won't be shown to the administrator)."
-    text = ('<b>Choose how to send:</b>\n\n'
-            '🔒 <b>Anonymously:</b> Your identity stays hidden.\n'
-            '📌 <b>Publicly:</b> Your name will be shown to administrator')
-    await message.answer(
-        text=text,
-        reply_markup=asks_yes_or_no(
-            yes_text='🔒 Anonymously',
-            no_text='📌 Publicly',
-            show_back=True
-        )
-    )
-
-    await state.set_state(MessageState.ANONYMOUS)
-
-
-@router.message(MessageState.ANONYMOUS, F.text.in_({"🔒 Anonymously", "📌 Publicly", GoBackButtons.GO_BACK}))
-async def ask_content(
-        message: types.Message,
-        state: FSMContext
-) -> None:
-    """
-    Receives ANONIMITY and ask user to write message content
-    """
-    is_anonymous = message.text
-    match is_anonymous:
-        case GoBackButtons.GO_BACK:
-            text = '📂 Select a category below:'
-            await message.answer(
-                text=text,
-                reply_markup=ask_category_kb()
-            )
-            await state.set_state(MessageState.CATEGORY_ID)
-            return
-        case '🔒 Anonymously':
-            is_anonymous = True
-        case '📌 Publicly':
-            is_anonymous = False
-
-    await state.update_data({'is_anonymous': is_anonymous})
 
     text = '✍️ Type your message:'
     await message.answer(
@@ -113,7 +74,6 @@ async def ask_content(
         reply_markup=go_back_kb()
     )
     await state.set_state(MessageState.CONTENT)
-
 
 @router.message(MessageState.CONTENT)
 async def ask_confirmation_of_feedback(
@@ -127,19 +87,12 @@ async def ask_confirmation_of_feedback(
     content = message.text
 
     if content == GoBackButtons.GO_BACK:
-        text = ('<b>Choose how to send:</b>\n\n'
-                '🔒 <b>Anonymously:</b> Your identity stays hidden.\n'
-                '📎 <b>Publicly:</b> Your name will be shown to administrator')
+        text = '📂 Select a category below:'
         await message.answer(
             text=text,
-            reply_markup=asks_yes_or_no(
-                yes_text='🔒 Anonymously',
-                no_text='📌 Publicly',
-                show_back=True
-            )
+            reply_markup=ask_category_kb()
         )
-
-        await state.set_state(MessageState.ANONYMOUS)
+        await state.set_state(MessageState.CATEGORY_ID)
         return
 
     await state.update_data({'content': content})
@@ -148,12 +101,11 @@ async def ask_confirmation_of_feedback(
 
     message_content = (await state.get_data()).get('content')
     category = (await state.get_data()).get('category_title')
-    is_anonymous = '🔒 Anonymous' if (await state.get_data()).get('is_anonymous') else '📌 Named'
 
     text = (
         f"📤 <b>Confirm: would you like to send this message?</b>\n"
         f"━━━━━━━━━━━━━━━\n"
-        f"<b>{is_anonymous} — {category}</b>\n\n"
+        f"<b>{category}</b>\n\n"
         f"<blockquote expandable>{message_content}</blockquote>"
     )
     await message.answer(
@@ -231,13 +183,11 @@ async def save_feedback(
             category_id = (await state.get_data()).get('category_id')
             category_title = (await state.get_data()).get('category_title')
             content = (await state.get_data()).get('content')
-            is_anonymous = (await state.get_data()).get('is_anonymous')
 
             new_message = MessageCreate(
                 category_id=category_id,
                 user_id=user_id,
                 content=content,
-                is_anonymous=is_anonymous,
             )
 
             message_repo = MessageRepo(session_with_commit)
@@ -247,7 +197,6 @@ async def save_feedback(
             group_message = MessageForTelegramGroup(
                 message_id=created_message.id,
                 content=content,
-                name=name if not is_anonymous else 'Anonymous',
                 category_title=category_title
             )
             admin_group_message_id = await send_message_to_group_and_return_group_message_id(message.bot, group_message)

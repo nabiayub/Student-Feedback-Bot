@@ -12,7 +12,6 @@ class Message(Base):
     __tablename__ = 'messages'
 
     content: Mapped[str] = mapped_column(String)
-    is_anonymous: Mapped[bool] = mapped_column(Boolean)
 
     user_id: Mapped[int | None] = mapped_column(
         ForeignKey('users.id', ondelete="SET NULL"),
