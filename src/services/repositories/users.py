@@ -55,54 +55,9 @@ class UserRepository:
 
         return db_user
 
-    async def set_name_and_registered_for_user(
-            self,
-            telegram_id: int,
-            name: str = None
-    ) -> None:
-        """
-        Method to set name of the user is User table.
-        If method receives name, changes "name" and "registered" fields.
-        Otherwise, name is set to none and only "registered" is set to True.
-        :param telegram_id: Telegram ID
-        :param name: Enter name. Default is None
-        :return:
-        """
-        user: User = await self.get_user_by_telegram_id_or_none(telegram_id)
 
-        if not user:
-            return
 
-        if name:
-            user.name = name
 
-        if not registered:
-            user.registered = True
-
-    async def update_username(self, user: User) -> User:
-        """Updates username in database"""
-        self.__session.add(user)
-        await self.__session.flush()
-        await self.__session.refresh(user)
-
-        return user
-
-    async def get_name_by_telegram_id(self, telegram_id: int) -> str:
-        """Returns user's name by telegram id."""
-        user: User | None = await self.get_user_by_telegram_id_or_none(telegram_id)
-
-        return user.name if user else None
-
-    async def get_user_message_count(self, telegram_id: int) -> int:
-        statement = (
-            select(func.count(Message.id))
-            .join(User)  # Join to filter by telegram_id instead of internal DB id
-            .where(User.telegram_id == telegram_id)
-        )
-
-        count = await self.__session.scalar(statement)
-
-        return count or 0
 
 
 

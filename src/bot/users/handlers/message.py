@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.bot.lexicon import MainMenuButtons, GoBackButtons, MessageButtons
 from src.bot.users.keyboards.message import ask_category_kb, go_back_kb
 from src.bot.users.keyboards.utils import asks_yes_or_no
+from src.bot.users.services.onboarding import main_menu
 from src.bot.users.states import MessageState
-from src.bot.users.utils import go_to_main_menu
 from src.config.settings import settings
 from src.database import models
 from src.schemas.messages import MessageCreate, MessageForTelegramGroup
@@ -256,10 +256,7 @@ async def save_feedback(
 
     await state.clear()
 
-    await go_to_main_menu(
-        user_tg=message.from_user,
+    await main_menu(
         chat_id=message.chat.id,
         bot=message.bot,
-        state=state,
-        session_with_commit=session_with_commit
     )

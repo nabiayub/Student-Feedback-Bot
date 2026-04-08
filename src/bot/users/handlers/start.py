@@ -4,8 +4,7 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.bot.lexicon import GoBackButtons
-from src.bot.users.services.onboarding import OnboardingService
-from src.bot.users.utils import go_to_main_menu
+from src.bot.users.services.onboarding import main_menu
 
 router = Router()
 
@@ -45,12 +44,9 @@ async def start_bot(message: types.Message,
     await message.answer(text=text)
 
     # starting the onboarding logic
-    await go_to_main_menu(
-        user_tg=message.from_user,
+    await main_menu(
         chat_id=message.from_user.id,
         bot=message.bot,
-        state=state,
-        session_with_commit=session_with_commit
     )
 
 
@@ -60,7 +56,6 @@ async def start_bot(message: types.Message,
 async def go_to_main_menu_handler(
         message: types.Message,
         state: FSMContext,
-        session_with_commit: AsyncSession,
         ):
     """
     Universal cancel command for any handler
@@ -71,12 +66,9 @@ async def go_to_main_menu_handler(
     """
     await state.clear()
 
-    await go_to_main_menu(
-        user_tg=message.from_user,
-        chat_id=message.chat.id,
+    await main_menu(
+        chat_id=message.from_user.id,
         bot=message.bot,
-        state=state,
-        session_with_commit=session_with_commit
     )
 
 
