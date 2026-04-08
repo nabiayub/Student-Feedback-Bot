@@ -3,7 +3,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import User as TgUser
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.users.keyboards.profile import cancel_name_kb
 from src.bot.users.keyboards.utils import go_to_main_menu_kb, main_menu_kb
 from src.bot.users.states import UserNameState
 from src.config.settings import settings
@@ -25,56 +24,14 @@ class OnboardingService:
 
     async def start_process(
         self,
-        user_tg: TgUser,
         chat_id: int,
-        state: FSMContext,
         bot: Bot
     ) -> None:
         """
         Entry point of onboarding logic.
         Can be called from message or callback handlers.
         """
-
-        user = await self.get_or_create_user(
-            username=user_tg.username,
-            telegram_id=user_tg.id,
-        )
-
-        user = await self.update_username(
-            new_username=user_tg.username,
-            user=user,
-        )
-
-        # First-time registration
-        if not user.name and not user.registered:
-            await self.set_name(chat_id, state, bot)
-
-            return
-
         await self.main_menu(chat_id, bot)
-
-    async def get_or_create_user(self, username: str, telegram_id: int) -> User:
-        user_create = UserCreate(username=username, telegram_id=telegram_id)
-        return await self._user_repo.get_or_create_user(user_create)
-
-    async def update_username(self, new_username: str, user: User) -> User:
-        if user.username != new_username:
-            user.username = new_username
-            await self._user_repo.update_username(user)
-        return user
-
-    async def set_name(self, chat_id: int, state: FSMContext, bot: Bot) -> None:
-        text = (
-        "<b>📝 Registration</b>\n\n"
-        "Please enter your name to continue.\n"
-        "<i>(Or tap skip below to remain anonymous):</i>"
-    )
-        await bot.send_message(
-            chat_id=chat_id,
-            text=text,
-            reply_markup=cancel_name_kb()
-        )
-        await state.set_state(UserNameState.NAME)
 
     async def main_menu(self, chat_id: int, bot: Bot) -> None:
         # is_admin = await admin_manager.is_admin(chat_id)
