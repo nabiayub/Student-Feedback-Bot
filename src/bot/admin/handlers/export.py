@@ -49,12 +49,19 @@ async def process_start_date(callback: types.CallbackQuery, callback_data: Simpl
     """
     Processes Start Date and asks for End Date.
     """
+    if callback_data.act == "CANCEL":
+        await state.clear()
+        await callback.answer("Export canceled")
+        await callback.message.delete()
+        await admin_panel(callback.message, state)
+        return
+
     selected, date = await SimpleCalendar().process_selection(callback, callback_data)
     if selected:
         await state.update_data(start_date=date)
         
         await callback.message.edit_text(
-            f"✅ Start Date: {date.strftime('%d-%m-%Y')}\n"
+            f"✅ Start Date: {date.strftime('%d.%m.%Y')}\n"
             "📅 <b>Step 2: Select End Date</b>\n\nPlease pick the end of the period:",
             reply_markup=await SimpleCalendar().start_calendar()
         )
@@ -66,6 +73,13 @@ async def process_end_date(callback: types.CallbackQuery, callback_data: SimpleC
     """
     Processes End Date, generates file and sends it.
     """
+    if callback_data.act == "CANCEL":
+        await state.clear()
+        await callback.answer("Export canceled")
+        await callback.message.delete()
+        await admin_panel(callback.message, state)
+        return
+
     selected, end_date = await SimpleCalendar().process_selection(callback, callback_data)
     if selected:
         data = await state.get_data()
