@@ -182,7 +182,6 @@ async def save_feedback(
             message_repo = MessageRepo(session_with_commit)
             created_message: models.Message = await message_repo.create_message_and_return_message(message=new_message)
 
-
             group_message = MessageForTelegramGroup(
                 message_id=created_message.id,
                 content=content,
@@ -191,6 +190,9 @@ async def save_feedback(
             admin_group_message_id = await send_message_to_group_and_return_group_message_id(message.bot, group_message)
 
             created_message.admin_group_message_id = admin_group_message_id
+
+            user_repo = UserRepository(session_with_commit)
+            await user_repo.register_user(message.from_user.id)
 
     await state.clear()
 

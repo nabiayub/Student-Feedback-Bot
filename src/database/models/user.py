@@ -10,19 +10,8 @@ class User(Base):
     """Users table"""
     __tablename__ = 'users'
 
-    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, autoincrement=False)
 
-    username: Mapped[str | None]
-    name: Mapped[Optional[str | None]] = mapped_column(String, nullable=True)
-
-    # indicates that the user has been asked to write his name at registration.
-    # No need to ask automatically after if he doesn't want to.
-    registered: Mapped[bool] = mapped_column(Boolean, default=False)
-
-    announcements: Mapped[List["Announcement"]] = relationship(
-        back_populates="user",
-        passive_deletes=True,
-    )
 
     def __repr__(self):
-        return f"<User(username='{self.username}, id={self.id}, telegram_id={self.telegram_id}')>"
+        return f"<User: telegram_id={self.telegram_id}')>"

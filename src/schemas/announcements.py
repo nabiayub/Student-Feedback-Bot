@@ -8,4 +8,4 @@ from src.schemas.users import UserBase
 class AnnouncementCreate(BaseModel):
     sent_users: int
     content: str
-    user_id: int
+    telegram_id: int

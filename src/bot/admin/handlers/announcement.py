@@ -103,23 +103,18 @@ async def send_announcement(
                 f"The announcement has been pushed to <b>{users_sent}</b> users.",
             )
 
-            user = await user_repo.get_user_by_telegram_id_or_none(message.from_user.id)
-            if user is None:
-                user_create = UserCreate(
-                    username=message.from_user.username,
-                    telegram_id=message.from_user.id)
-                user = await user_repo.get_or_create_user(user_create)
 
             announcement_message = AnnouncementCreate(
                 content=text_for_users,
                 sent_users=users_sent,
-                user_id=user.id
+                telegram_id=message.from_user.id
             )
 
             announcement_repo = AnnouncementRepo(session_with_commit)
             await announcement_repo.create_announcement(announcement_message)
 
     await state.clear()
+
     await admin_panel(
         message=message,
         state=state
