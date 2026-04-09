@@ -19,12 +19,6 @@ class User(Base):
     # No need to ask automatically after if he doesn't want to.
     registered: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    messages: Mapped[List["Message"] | None] = relationship(
-        "Message",
-        back_populates="user",
-        passive_deletes=True,
-    )
-
     announcements: Mapped[List["Announcement"]] = relationship(
         back_populates="user",
         passive_deletes=True,

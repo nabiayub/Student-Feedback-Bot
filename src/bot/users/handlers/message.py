@@ -170,28 +170,17 @@ async def save_feedback(
                 reply_markup=ReplyKeyboardRemove()
             )
 
-            user_repo = UserRepository(session_with_commit)
-            user = await user_repo.get_user_by_telegram_id_or_none(message.from_user.id)
-            if user is None:
-                user_create = UserCreate(
-                    username=message.from_user.username,
-                    telegram_id=message.from_user.id)
-                user = await user_repo.get_or_create_user(user_create)
-
-            user_id: int = user.id
-            name = user.name
             category_id = (await state.get_data()).get('category_id')
             category_title = (await state.get_data()).get('category_title')
             content = (await state.get_data()).get('content')
 
             new_message = MessageCreate(
                 category_id=category_id,
-                user_id=user_id,
                 content=content,
             )
 
             message_repo = MessageRepo(session_with_commit)
-            created_message: models.Message = await message_repo.create_message_and_return_message_id(message=new_message)
+            created_message: models.Message = await message_repo.create_message_and_return_message(message=new_message)
 
 
             group_message = MessageForTelegramGroup(

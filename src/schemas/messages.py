@@ -12,7 +12,7 @@ class MessageBase(BaseModel):
 
 
 class MessageCreate(MessageBase):
-    user_id: int
+    pass
 
 
 class MessageRead(BaseModel):
