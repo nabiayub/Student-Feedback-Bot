@@ -43,6 +43,24 @@ redis = ["redis[hiredis] (>=6.2.0,<8)"]
 signature = ["cryptography (>=46.0.0)"]
 
 [[package]]
+name = "aiogram-calendar"
+version = "0.6.0"
+description = "Simple Inline Calendar & Date Selection tool for Aiogram Telegram bots"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "aiogram_calendar-0.6.0-py3-none-any.whl", hash = "sha256:75e6616eb7ffb399362a2e29d94d75a3750921e354067bb0c2f3097de15db34f"},
+    {file = "aiogram_calendar-0.6.0.tar.gz", hash = "sha256:deef542841e348032621823c727e30fd668339056771bdaaf937b5f765973ab8"},
+]
+
+[package.dependencies]
+aiogram = ">=3.7"
+
+[package.extras]
+dev = ["pytest", "pytest-asyncio"]
+
+[[package]]
 name = "aiohappyeyeballs"
 version = "2.6.1"
 description = "Happy Eyeballs for asyncio"
@@ -1819,4 +1837,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11, <3.15"
-content-hash = "240adb6cb322325ba1b750911914da9f27cb108c5f0a3ef66c72dab2f6cbc749"
+content-hash = "9e52470a5906646ea67eb3a7ad85e8f1eaee95045a4a8cded1adf993d855a83e"

@@ -9,9 +9,9 @@ class ExportService:
         """
         return [
             {
-                'Content': msg.content,
                 'Category': msg.category.title if msg.category else 'N/A',
-                'Created At': msg.created_at.strftime('%d-%m-%Y %H:%M')
+                'Date': msg.created_at.strftime('%d.%m.%Y %H:%M'),
+                'Content': msg.content
             }
             for msg in messages
         ]
@@ -20,10 +20,11 @@ class ExportService:
     def generate_csv(messages: list[Message], file_path: str) -> str:
         """
         Generates a CSV file from a list of messages.
+        Using ';' as separator for better compatibility with Excel.
         """
         data = ExportService._prepare_data(messages)
         df = pd.DataFrame(data)
-        df.to_csv(file_path, index=False, encoding='utf-8-sig')
+        df.to_csv(file_path, index=False, sep=';', encoding='utf-8-sig')
         return file_path
 
     @staticmethod
