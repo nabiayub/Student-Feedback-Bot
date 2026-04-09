@@ -14,7 +14,7 @@ else:
     # Local Dev settings (Tashkent Bot ↔ Frankfurt DB)
     # We remove the ping to get our speed back!
     engine_params = {
-        "pool_pre_ping": False,
+        "pool_pre_ping": True,
         "pool_recycle": 60,  # Frequent refresh to avoid timeouts
         "pool_size": 5,
         "max_overflow": 5

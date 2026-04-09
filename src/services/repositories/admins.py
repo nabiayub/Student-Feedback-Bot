@@ -18,7 +18,7 @@ class AdminRepo():
         statement = select(Admin).where(Admin.telegram_id == telegram_id)
         admin = await self.__session.execute(statement)
 
-        return admin
+        return admin.scalar_one_or_none()
 
     async def get_all_admin_id(self) -> ScalarResult[int]:
         """Get all admin id list"""
