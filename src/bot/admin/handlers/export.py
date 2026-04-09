@@ -11,6 +11,7 @@ from src.bot.admin.services.exporter import ExportService
 from datetime import datetime
 from typing import Any
 import os
+import asyncio
 
 router = Router()
 
@@ -49,6 +50,11 @@ async def _perform_export(callback: types.CallbackQuery, state: FSMContext, sess
     )
     
     # 4. Cleanup
+    try:
+        await callback.message.delete()
+    except Exception:
+        pass
+
     if os.path.exists(file_path):
         os.remove(file_path)
         
@@ -61,7 +67,7 @@ async def start_export(message: types.Message, state: FSMContext):
     Initial step of export: Choose format.
     """
     # Remove the reply keyboard first
-    await message.answer(
+    loading_msg = await message.answer(
         text="🔄 Loading export options...",
         reply_markup=types.ReplyKeyboardRemove()
     )
@@ -71,7 +77,16 @@ async def start_export(message: types.Message, state: FSMContext):
         "📊 <b>Export Data</b>\n\nPlease select the file format you'd like to receive:",
         reply_markup=export_format_kb(),
     )
+    
+    # Give a small delay for visual feedback then delete the loading message
+    await asyncio.sleep(1)
+    try:
+        await loading_msg.delete()
+    except Exception:
+        pass
+        
     await state.set_state(ExportState.CHOOSE_FORMAT)
+
 
 @router.callback_query(ExportState.CHOOSE_FORMAT, F.data.in_({"export_excel", "export_csv"}))
 async def choose_range_menu(callback: types.CallbackQuery, state: FSMContext):
