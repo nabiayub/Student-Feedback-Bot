@@ -29,6 +29,11 @@ class YesNoButtons(str, Enum):
 class AdminMenuButtons(str, Enum):
     POST_ANNOUNCEMENT = '🔔 Announcement'
     ANALYTICS = '📊 Analytics'
+    EXPORT_DATA = '📥 Export Data'
+
+class AdminExportButtons(str, Enum):
+    EXCEL = '📊 Excel (.xlsx)'
+    CSV = '📄 CSV (.csv)'
 
 class AdminAnnouncementButtons(str, Enum):
     CONFIRM_ANNOUNCEMENT = '✅ Send'

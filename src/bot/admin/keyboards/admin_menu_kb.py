@@ -9,9 +9,10 @@ def admin_menu_kb() -> ReplyKeyboardMarkup:
 
     keyboard.button(text=AdminMenuButtons.POST_ANNOUNCEMENT)
     keyboard.button(text=AdminMenuButtons.ANALYTICS)
+    keyboard.button(text=AdminMenuButtons.EXPORT_DATA)
     keyboard.button(text=GoBackButtons.BACK_TO_MENU)
 
-    keyboard.adjust(2, 1)
+    keyboard.adjust(2, 2)
 
     return keyboard.as_markup(resize_keyboard=True)
 
