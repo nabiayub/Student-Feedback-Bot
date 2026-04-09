@@ -34,6 +34,8 @@ class AdminMenuButtons(str, Enum):
 class AdminExportButtons(str, Enum):
     EXCEL = '📊 Excel (.xlsx)'
     CSV = '📄 CSV (.csv)'
+    EXPORT_ALL = '📅 All Time'
+    CUSTOM_RANGE = '🗓 Custom Range'
 
 class AdminAnnouncementButtons(str, Enum):
     CONFIRM_ANNOUNCEMENT = '✅ Send'

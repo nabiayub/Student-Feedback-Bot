@@ -13,3 +13,15 @@ def export_format_kb() -> InlineKeyboardMarkup:
     keyboard.adjust(2, 1)
 
     return keyboard.as_markup()
+
+def export_range_kb() -> InlineKeyboardMarkup:
+    """Keyboard for selecting export range"""
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.button(text=AdminExportButtons.EXPORT_ALL.value, callback_data="range_all")
+    keyboard.button(text=AdminExportButtons.CUSTOM_RANGE.value, callback_data="range_custom")
+    keyboard.button(text=GoBackButtons.GO_BACK.value, callback_data="range_back")
+
+    keyboard.adjust(2, 1)
+
+    return keyboard.as_markup()

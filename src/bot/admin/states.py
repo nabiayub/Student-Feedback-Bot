@@ -6,5 +6,6 @@ class AnnouncementState(StatesGroup):
 
 class ExportState(StatesGroup):
     CHOOSE_FORMAT = State()
+    CHOOSE_RANGE = State()
     START_DATE = State()
     END_DATE = State()
